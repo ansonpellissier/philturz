@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Philturz</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="scholarship-filters" class="philturz__filters">
+      <div
+        class="philturz__filter"
+        data-philturz-key="study-level"
+        data-philturz-type="select-single"
+        data-philturz-label="Study level"
+        data-philturz-empty="Any"
+        data-philturz-values="Certificate; Diploma; Undergraduate; Postgraduate; Higher degrees by research">
+        <label>Study level</label>
+        <select>
+          <option value="">Any</option>
+          <option value="Certificate">Certificate</option>
+          <option value="Diploma">Diploma</option>
+          <option value="Undergraduate">Undergraduate</option>
+          <option value="Postgraduate">Postgraduate</option>
+          <option value="Higher degrees by research">Higher degrees by research</option>
+        </select>
+      </div>
+      <div
+        class="philturz__filter"
+        data-philturz-key="student-status"
+        data-philturz-type="single"
+        data-philturz-label="Student status"
+        data-philturz-empty="Any"
+        data-philturz-values="Commencing; Current">
+        <label>Student status</label>
+        <select>
+          <option value="">Any</option>
+          <option value="Commencing">Commencing</option>
+          <option value="Current">Current</option>
+        </select>
+      </div>
+      <div
+        class="philturz__filter"
+        data-philturz-key="scholarship-type"
+        data-philturz-type="single"
+        data-philturz-label="Scholarship type"
+        data-philturz-empty="Any"
+        data-philturz-values="Academic merit; Access and equity">
+        <label>Scholarship type</label>
+        <select>
+          <option value="">Any</option>
+          <option value="Academic merit">Academic merit</option>
+          <option value="Access and equity">Access and equity</option>
+        </select>
+      </div>
+      <div
+        class="philturz__filter"
+        data-philturz-key="student-type"
+        data-philturz-type="single"
+        data-philturz-label="Student type"
+        data-philturz-empty="Any"
+        data-philturz-values="Domestic; International">
+        <label>Student type</label>
+        <select>
+          <option value="">Any</option>
+          <option value="Domestic">Domestic</option>
+          <option value="International">International</option>
+        </select>
+      </div>
+      <div
+        class="philturz__filter"
+        data-philturz-key="school"
+        data-philturz-type="multiple"
+        data-philturz-label="School"
+        data-philturz-empty="Any"
+        data-philturz-values="School of Business; School of Arts; School of Health and Life Sciences; School of Nursing and Healthcare Professions; School of Science, Engineering and Information Technology">
+        <label>School</label>
+        <div>
+          <label><input type="checkbox" value="School of Business">School of Business</label>
+          <label><input type="checkbox" value="School of Arts">School of Arts</label>
+          <label><input type="checkbox" value="School of Education">School of Education</label>
+          <label><input type="checkbox" value="School of Health and Life Sciences">School of Health and Life Sciences</label>
+          <label><input type="checkbox" value="School of Nursing and Healthcare Professions">School of Nursing and Healthcare Professions</label>
+          <label><input type="checkbox" value="School of Science, Engineering and Information Technology">School of Science, Engineering and Information Technology</label>
+        </div>
+      </div>
+    </div>
+    <div id="scholarship-list">
+      <ul class="philturz__list">
+        <li
+          class="philturz__item"
+          data-philturz-study-level="Undergraduate; Postgraduate"
+          data-philturz-student-status="Commencing"
+          data-philturz-scholarship-type="Academic merit"
+          data-philturz-student-type="Domestic"
+          data-philturz-school="School of Arts; School of Education; School of Health and Life Sciences; School of Nursing and Healthcare Professions; School of Science, Engineering and Information Technology; School of Business">
+          <ul>
+            <li>
+              <label>Name</label>
+              <span>High Achievers Scholarships - 80+ ATAR</span>
+            </li>
+            <li>
+              <label>Annual value</label>
+              <span>$15,000</span>
+            </li>
+            <li>
+              <label>Duration</label>
+              <span>1 year</span>
+            </li>
+            <li>
+              <label>Open date</label>
+              <span>Monday 3 December 2018</span>
+            </li>
+            <li>
+              <label>Close date</label>
+              <span>Friday 11 January 2019</span>
+            </li>
+          </ul>
+        </li>
+        <li
+          class="philturz__item"
+          data-philturz-study-level="Undergraduate; Postgraduate"
+          data-philturz-student-status="Commencing"
+          data-philturz-scholarship-type="Academic merit"
+          data-philturz-student-type="Domestic"
+          data-philturz-school="School of Nursing and Healthcare Professions; School of Science, Engineering and Information Technology">
+          <ul>
+            <li>
+              <label>Name</label>
+              <span>High Achievers Scholarships - 90+ ATAR</span>
+            </li>
+            <li>
+              <label>Annual value</label>
+              <span>$18,000</span>
+            </li>
+            <li>
+              <label>Duration</label>
+              <span>1 year</span>
+            </li>
+            <li>
+              <label>Open date</label>
+              <span>Monday 10 December 2018</span>
+            </li>
+            <li>
+              <label>Close date</label>
+              <span>Friday 18 January 2019</span>
+            </li>
+          </ul>
+        </li>
+        <li
+          class="philturz__item"
+          data-philturz-study-level="Undergraduate"
+          data-philturz-student-status="Current"
+          data-philturz-scholarship-type="Access and equity"
+          data-philturz-student-type="International"
+          data-philturz-school="School of Business">
+          <ul>
+            <li>
+              <label>Name</label>
+              <span>Dean's Scholarship</span>
+            </li>
+            <li>
+              <label>Annual value</label>
+              <span>$8,000</span>
+            </li>
+            <li>
+              <label>Duration</label>
+              <span>Normal course duration</span>
+            </li>
+            <li>
+              <label>Open date</label>
+              <span>Monday 7 January 2019</span>
+            </li>
+            <li>
+              <label>Close date</label>
+              <span>Friday 8 February 2019</span>
+            </li>
+          </ul>
+        </li>
+        <li
+          class="philturz__item"
+          data-philturz-study-level=""
+          data-philturz-student-status="Current"
+          data-philturz-scholarship-type="Access and equity"
+          data-philturz-student-type=""
+          data-philturz-school="">
+          <ul>
+            <li>
+              <label>Name</label>
+              <span>TEST SCHOLARSHIP</span>
+            </li>
+            <li>
+              <label>Annual value</label>
+              <span>$8,000</span>
+            </li>
+            <li>
+              <label>Duration</label>
+              <span>Normal course duration</span>
+            </li>
+            <li>
+              <label>Open date</label>
+              <span>Monday 7 January 2019</span>
+            </li>
+            <li>
+              <label>Close date</label>
+              <span>Friday 8 February 2019</span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <button id="test">Test</button>
+
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+</html>
