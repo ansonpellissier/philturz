@@ -7,11 +7,7 @@
       emptyValue: ''
     };
 
-    var filters = [
-      // { key: 'study-level', value: 'Undergraduate' },
-      // { key: 'student-type', value: 'Domestic' },
-      // { key: 'school', value: ['School of Arts', 'School of Business'] }
-    ];
+    var filters = [];
 
 
 
@@ -30,14 +26,20 @@
       return (values.indexOf(value) !== -1);
     }
 
+    function isSimpleFilterValue(filterValue) {
+      return typeof filterValue === 'string';
+    }
+
 
 
     /*
      * FILTER APPLICATION
      */
     function filterItemValues(itemValues, filterValue) {
-      var compareFn = typeof filterValue === 'string' ? valuesEqual : valueInValues;
+      // console.log(itemValues, filterValue);
+      var compareFn = isSimpleFilterValue() ? valuesEqual : valueInValues;
       return itemValues.some(function(itemValue) {
+        // console.log(compareFn(filterValue, itemValue));
         return compareFn(filterValue, itemValue);
       });
     }
@@ -76,12 +78,6 @@
       return { key: key, value: value };
     }
 
-    function includesFilter(key) {
-      return filters.includes(function(filter) {
-        return filter.key === key;
-      });
-    }
-
     function addFilter(key, value) {
       var filter = createFilter(key, value);
       return filters.concat(filter);
@@ -100,16 +96,6 @@
       });
     }
 
-    function changeFilter(key, value) {
-      if (value === cfg.emptyValue) {
-        filters = removeFilter(key);
-      } else if (includesFilter(key)) {
-        filters =  updateFilter(key, value)
-      } else {
-        filters = addFilter(key, value);
-      }
-    }
-
     function addFilterMultiple(key, value) {
       var isExisting = false;
       var newFilters = filters.map(function(filter) {
@@ -125,41 +111,65 @@
     }
 
     function removeFilterMultiple(key, value) {
-      filters = filters.map(function(filter) {
-        var newValue = filter.value;
-        if (filter.key === key) {
-          newValue = newValue.filter(function(v) {
-            return v !== value;
+      filters = filters
+        .map(function(filter) {
+          var newValue = filter.value;
+          if (filter.key === key) {
+            newValue = newValue.filter(function(v) {
+              return v !== value;
+            });
+          }
+          return createFilter(filter.key, newValue);
+        })
+        .filter(function(filter) {
+          return filter.key === key && filter.value.length > 0;
+        });
+    }
+
+
+
+    // EVENT HANDLERS
+    function onFilterChange(key) {
+      return function(e) {
+        var value = e.target.value;
+        if (value === cfg.emptyValue) {
+          filters = removeFilter(key);
+        } else {
+          var isIncluded = filters.some(function(filter) {
+            return filter.key === key;
           });
+          filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
         }
-        return createFilter(filter.key, newValue);
-      });
+        filterItems();
+      };
+    }
+
+    function onFilterMultipleChange(key) {
+      return function(e) {
+        var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
+        addRemoveFn(key, e.target.value);
+        filterItems();
+      };
     }
 
 
 
-    // TESTING
-    console.log(filters);
-    changeFilter('study-level', 'Postgraduate');
-    console.log(filters);
-    changeFilter('student-type', 'Domestic');
-    console.log(filters);
-    changeFilter('study-level', 'Undergraduate');
-    console.log(filters);
-    changeFilter('study-level', '');
-    console.log(filters);
-    addFilterMultiple('school', 'School of Nursing and Healthcare Professions');
-    console.log(filters);
-    addFilterMultiple('school', 'School of Arts');
-    console.log(filters);
-    addFilterMultiple('school', 'School of Arts');
-    console.log(filters);
-    removeFilterMultiple('school', 'School of Arts');
-    console.log(filters);
-
-    function test() {
-      filterItems();
-    }
-
-    document.getElementById('test').addEventListener('click', test);
+    // INITIAL SETUP
+    var filterElements = Array.from(document.querySelectorAll('.philturz__filter'));
+    filterElements.forEach(function(filterElement) {
+      var key = filterElement.dataset.philturzKey;
+      var type = filterElement.dataset.philturzType;
+      switch(type) {
+        case 'single':
+          var select = filterElement.querySelector('select');
+          select.addEventListener('change', onFilterChange(key));
+          break;
+        case 'multiple':
+          var checkboxes = Array.from(filterElement.querySelectorAll('input[type="checkbox"]'));
+          checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', onFilterMultipleChange(key));
+          })
+          break;
+      }
+    });
   })();
