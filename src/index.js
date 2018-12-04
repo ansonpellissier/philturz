@@ -1,22 +1,23 @@
 (function() {
-  var cfg = {
+  var _cfg = {
     singleType: 'single',
     multipleType: 'multiple',
     hiddenClass: 'philturz__hidden',
     itemSelector: '.philturz__item',
+    filterSelector: '.philturz__filter',
     attributePrefix: 'data-philturz-',
     listDelimiter: '; ',
     emptyValue: '',
     emptyLabel: ''
   };
-  var filters = [];
+  var _filters = [];
 
 
   /*
    * UTILS
    */
   function valuesFromList(list) {
-    return list === cfg.emptyValue ? [] : list.split(cfg.listDelimiter);
+    return list === _cfg.emptyValue ? [] : list.split(_cfg.listDelimiter);
   }
 
   function valuesEqual(a, b) {
@@ -45,8 +46,8 @@
   function filterItem(item) {
     var isHidden = false;
 
-    filters.some(function(filter) {
-      var attribute = cfg.attributePrefix + filter.key;
+    _filters.some(function(filter) {
+      var attribute = _cfg.attributePrefix + filter.key;
       var itemValues = valuesFromList(item.attributes[attribute].value);
       if (itemValues.length === 0) return false;
       var isMatch = filterItemValues(itemValues, filter.value);
@@ -56,14 +57,14 @@
     });
 
     if (isHidden) {
-      item.classList.add(cfg.hiddenClass);
+      item.classList.add(_cfg.hiddenClass);
     } else {
-      item.classList.remove(cfg.hiddenClass);
+      item.classList.remove(_cfg.hiddenClass);
     }
   }
 
   function filterItems() {
-    var items = Array.from(document.querySelectorAll(cfg.itemSelector));
+    var items = Array.from(document.querySelectorAll(_cfg.itemSelector));
     items.forEach(filterItem);
   }
 
@@ -77,25 +78,25 @@
 
   function addFilter(key, value) {
     var filter = createFilter(key, value);
-    return filters.concat(filter);
+    return _filters.concat(filter);
   }
 
   function updateFilter(key, value) {
-    return filters.map(function(filter) {
+    return _filters.map(function(filter) {
       var newValue = (filter.key === key) ? value : filter.value;
       return createFilter(filter.key, newValue);
     });
   }
 
   function removeFilter(key) {
-    return filters.filter(function(filter) {
+    return _filters.filter(function(filter) {
       return filter.key !== key;
     });
   }
 
   function addFilterMultiple(key, value) {
     var isExisting = false;
-    var newFilters = filters.map(function(filter) {
+    var newFilters = _filters.map(function(filter) {
       var newValue = filter.value;
       if (filter.key === key) {
         isExisting = true;
@@ -104,11 +105,11 @@
       }
       return createFilter(filter.key, newValue);
     });
-    filters = isExisting ? newFilters : newFilters.concat(createFilter(key, [value]));
+    _filters = isExisting ? newFilters : newFilters.concat(createFilter(key, [value]));
   }
 
   function removeFilterMultiple(key, value) {
-    filters = filters
+    _filters = _filters
       .map(function(filter) {
         var newValue = filter.value;
         if (filter.key === key) {
@@ -119,7 +120,7 @@
         return createFilter(filter.key, newValue);
       })
       .filter(function(filter) {
-        return filter.key === key && filter.value.length > 0;
+        return filter.key !== key || filter.value.length > 0;
       });
   }
 
@@ -130,13 +131,13 @@
   function onFilterChange(key) {
     return function(e) {
       var value = e.target.value;
-      if (value === cfg.emptyValue) {
-        filters = removeFilter(key);
+      if (value === _cfg.emptyValue) {
+        _filters = removeFilter(key);
       } else {
-        var isIncluded = filters.some(function(filter) {
+        var isIncluded = _filters.some(function(filter) {
           return filter.key === key;
         });
-        filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
+        _filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
       }
       filterItems();
     };
@@ -154,14 +155,14 @@
   /*
    * INIT
    */
-  var filterElements = Array.from(document.querySelectorAll('.philturz__filter'));
+  var filterElements = Array.from(document.querySelectorAll(_cfg.filterSelector));
   filterElements.forEach(function(filterElement) {
     var attributes = {
       key: filterElement.dataset.philturzKey,
       type: filterElement.dataset.philturzType,
       label: filterElement.dataset.philturzLabel,
-      emptyLabel: filterElement.dataset.philturzEmptyLabel || cfg.emptyLabel,
-      values: filterElement.dataset.philturzValues.split(cfg.listDelimiter)
+      emptyLabel: filterElement.dataset.philturzEmptyLabel || _cfg.emptyLabel,
+      values: filterElement.dataset.philturzValues.split(_cfg.listDelimiter)
     };
 
     var label = document.createElement('label');
@@ -169,11 +170,11 @@
     label.appendChild(labelText);
 
     switch(attributes.type) {
-      case cfg.singleType:
+      case _cfg.singleType:
         var select = document.createElement('select');
         select.autocomplete = 'off';
         var emptyOption = document.createElement('option');
-        emptyOption.value = cfg.emptyValue;
+        emptyOption.value = _cfg.emptyValue;
         emptyOption.text = attributes.emptyLabel;
         select.appendChild(emptyOption);
         attributes.values.forEach(function(value) {
@@ -188,7 +189,7 @@
 
         select.addEventListener('change', onFilterChange(attributes.key));
         break;
-      case cfg.multipleType:
+      case _cfg.multipleType:
         var group = document.createElement('div');
         attributes.values.forEach(function(value) {
           var checkboxLabel = document.createElement('label');
