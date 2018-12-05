@@ -5,17 +5,21 @@
     classes: {
       hidden: 'philturz-hidden',
       filters: {
+        filters: 'philturz-filters',
+        filter: 'philturz-filter',
         singleType: 'philturz-filter-type-single',
         multipleType: 'philturz-filter-type-multiple',
         label: 'philturz-filter-label',
         control: 'philturz-filter-control',
         controlLabel: 'philturz-filter-control-label',
-        controlInput: 'philturz-filter-control-input'
-      }
+        controlInput: 'philturz-filter-control-input',
+        form: 'philturz-filters-form',
+        reset: 'philturz-filters-reset'
+      },
+      item: 'philturz-item'
     },
-    itemSelector: '.philturz-item',
-    filterSelector: '.philturz-filter',
     attributePrefix: 'data-philturz-',
+    resetText: 'Reset filters',
     listDelimiter: '; ',
     emptyValue: '',
     emptyLabel: ''
@@ -40,6 +44,10 @@
 
   function isSimpleFilterValue(filterValue) {
     return typeof filterValue === 'string';
+  }
+
+  function getClassSelector(className) {
+    return '.' + className;
   }
 
 
@@ -74,7 +82,7 @@
   }
 
   function filterItems() {
-    var items = Array.from(document.querySelectorAll(_cfg.itemSelector));
+    var items = Array.from(document.querySelectorAll(getClassSelector(_cfg.classes.item)));
     items.forEach(filterItem);
   }
 
@@ -138,7 +146,7 @@
   /*
    * EVENT LISTENERS
    */
-  function onFilterChange(key) {
+  function getOnFilterChange(key) {
     return function(e) {
       var value = e.target.value;
       if (value === _cfg.emptyValue) {
@@ -153,7 +161,7 @@
     };
   }
 
-  function onFilterMultipleChange(key) {
+  function getOnFilterMultipleChange(key) {
     return function(e) {
       var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
       addRemoveFn(key, e.target.value);
@@ -161,77 +169,111 @@
     };
   }
 
+  function onResetClick() {
+    _filters = [];
+    filterItems();
+  }
+
+  function onFormSubmit(e) {
+    console.log('Test');
+    e.preventDefault();
+  }
+
 
   /*
    * INIT
    */
-  var filterElements = Array.from(document.querySelectorAll(_cfg.filterSelector));
-  filterElements.forEach(function(filterElement) {
-    var attributes = {
-      key: filterElement.dataset.philturzKey,
-      type: filterElement.dataset.philturzType,
-      label: filterElement.dataset.philturzLabel,
-      emptyLabel: filterElement.dataset.philturzEmptyLabel || _cfg.emptyLabel,
-      values: filterElement.dataset.philturzValues.split(_cfg.listDelimiter)
-    };
+  function init() {
+    var filterElements = Array.from(document.querySelectorAll(getClassSelector(_cfg.classes.filters.filter)));
 
-    var label = document.createElement('label');
-    var labelText = document.createTextNode(attributes.label);
-    label.classList.add(_cfg.classes.filters.label);
-    label.appendChild(labelText);
-    filterElement.appendChild(label);
+    filterElements.forEach(function(filterElement) {
+      var attributes = {
+        key: filterElement.dataset.philturzKey,
+        type: filterElement.dataset.philturzType,
+        label: filterElement.dataset.philturzLabel,
+        emptyLabel: filterElement.dataset.philturzEmptyLabel || _cfg.emptyLabel,
+        values: filterElement.dataset.philturzValues.split(_cfg.listDelimiter)
+      };
 
-    switch(attributes.type) {
-      case _cfg.singleType:
-        var control = document.createElement('div');
-        var select = document.createElement('select');
-        var emptyOption = document.createElement('option');
+      var label = document.createElement('label');
+      var labelText = document.createTextNode(attributes.label);
+      label.classList.add(_cfg.classes.filters.label);
+      label.appendChild(labelText);
+      filterElement.appendChild(label);
 
-        filterElement.classList.add(_cfg.classes.filters.singleType);
-        control.classList.add(_cfg.classes.filters.control);
-        select.classList.add(_cfg.classes.filters.controlInput);
-        select.autocomplete = 'off';
-        
-        emptyOption.value = _cfg.emptyValue;
-        emptyOption.text = attributes.emptyLabel;
-        select.appendChild(emptyOption);
-
-        attributes.values.forEach(function(value) {
-          var option = document.createElement('option');
-          option.value = value;
-          option.text = value;
-          select.appendChild(option);
-        });
-
-        control.appendChild(select);
-        filterElement.appendChild(control);
-
-        select.addEventListener('change', onFilterChange(attributes.key));
-        break;
-      case _cfg.multipleType:
-        attributes.values.forEach(function(value) {
+      switch(attributes.type) {
+        case _cfg.singleType:
           var control = document.createElement('div');
-          var checkboxLabel = document.createElement('label');
-          var checkboxLabelText = document.createTextNode(value);
-          var checkbox = document.createElement('input');
+          var select = document.createElement('select');
+          var emptyOption = document.createElement('option');
 
-          filterElement.classList.add(_cfg.classes.filters.multipleType);
+          filterElement.classList.add(_cfg.classes.filters.singleType);
           control.classList.add(_cfg.classes.filters.control);
-          checkboxLabel.classList.add(_cfg.classes.filters.controlLabel);
-          checkbox.classList.add(_cfg.classes.filters.controlInput);
-
-          checkbox.type = 'checkbox';
-          checkbox.autocomplete = 'off';
-          checkbox.value = value;
-
-          checkboxLabel.appendChild(checkbox);
-          checkboxLabel.appendChild(checkboxLabelText);
-          control.appendChild(checkboxLabel);
-          filterElement.appendChild(control);
+          select.classList.add(_cfg.classes.filters.controlInput);
+          select.autocomplete = 'off';
           
-          checkbox.addEventListener('change', onFilterMultipleChange(attributes.key));
-        });
-        break;
-    }
-  });
+          emptyOption.value = _cfg.emptyValue;
+          emptyOption.text = attributes.emptyLabel;
+          select.appendChild(emptyOption);
+
+          attributes.values.forEach(function(value) {
+            var option = document.createElement('option');
+            option.value = value;
+            option.text = value;
+            select.appendChild(option);
+          });
+
+          control.appendChild(select);
+          filterElement.appendChild(control);
+
+          select.addEventListener('change', getOnFilterChange(attributes.key));
+          break;
+        case _cfg.multipleType:
+          attributes.values.forEach(function(value) {
+            var control = document.createElement('div');
+            var checkboxLabel = document.createElement('label');
+            var checkboxLabelText = document.createTextNode(value);
+            var checkbox = document.createElement('input');
+
+            filterElement.classList.add(_cfg.classes.filters.multipleType);
+            control.classList.add(_cfg.classes.filters.control);
+            checkboxLabel.classList.add(_cfg.classes.filters.controlLabel);
+            checkbox.classList.add(_cfg.classes.filters.controlInput);
+
+            checkbox.type = 'checkbox';
+            checkbox.autocomplete = 'off';
+            checkbox.value = value;
+
+            checkboxLabel.appendChild(checkbox);
+            checkboxLabel.appendChild(checkboxLabelText);
+            control.appendChild(checkboxLabel);
+            filterElement.appendChild(control);
+            
+            checkbox.addEventListener('change', getOnFilterMultipleChange(attributes.key));
+          });
+          break;
+      }
+    });
+
+    var formElement = document.createElement('form');
+    formElement.addEventListener('submit', onFormSubmit);
+    formElement.addEventListener('reset', onResetClick);
+    formElement.classList.add(_cfg.classes.filters.form);
+
+    var filtersElement = document.querySelector(getClassSelector(_cfg.classes.filters.filters));
+    var childElements = Array.from(filtersElement.children);
+    childElements.forEach(function(childElement) {
+      formElement.appendChild(childElement);
+    });
+
+    var resetElement = document.createElement('input');
+    resetElement.type = 'reset';
+    resetElement.value = 'Reset filters';
+    resetElement.classList.add(_cfg.classes.filters.reset);
+
+    formElement.appendChild(resetElement);
+    filtersElement.appendChild(formElement);
+  }
+
+  init();
 })();
