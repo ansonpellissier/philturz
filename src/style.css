@@ -1,27 +1,139 @@
-#scholarship-filters {
+body {
+  margin: 0;
+  padding: 5px;
+}
+
+
+.philturz-hidden {
+  display: none;
+}
+
+
+.philturz-filters,
+.philturz-list {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+.philturz-filters {
   padding: 15px;
-  background-color: lightblue;
 }
-#scholarship-filters label {
-  display: block;
+.philturz-filter + .philturz-filter {
+  margin-top: 10px;
 }
-#scholarship-filters label, #scholarship-list label {
+.philturz-filter + .philturz-filter.philturz-filter-type-multiple {
+  margin-top: 20px;
+}
+.philturz-filter-type-single .philturz-filter-label {
+  display: none;
+}
+.philturz-filter-label {
   font-weight: bold;
 }
-#scholarship-list > ul {
+.philturz-filter-type-multiple .philturz-filter-label {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.philturz-filter-type-multiple .philturz-filter-control {
+  margin-top: 15px;
+  padding-left: 10px;
+  padding-right: 15px;
+}
+.philturz-filter-type-multiple .philturz-filter-control:first-of-type {
+  border-top: 1px solid #555555;
+  padding-top: 15px;
+  margin-top: 10px;
+}
+.philturz-filter-control-label {
+  position: relative;
+  display: inline-block;
+  padding-left: 25px;
+}
+.philturz-filter-control-label .philturz-filter-control-input {
+  position: absolute;
+  left: 0;
+}
+.philturz-filter-type-single .philturz-filter-control-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.philturz-filter-type-single .philturz-filter-control-input::-ms-expand {
+  display: none;
+}
+.philturz-filter-type-single .philturz-filter-control-input {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  padding-right: 30px;
+  border: 1px solid #555555;
+  line-height: 1;
+  font-style: italic;
+  color: #555555;
+  background: transparent;
+  z-index: 1;
+}
+.philturz-filter-type-single .philturz-filter-control {
+  position: relative;
+}
+.philturz-filter-type-single .philturz-filter-control::after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 6px;
+    height: 6px;
+    top: 15px;
+    right: 15px;
+    font-size: 15px;
+    line-height: 1;
+    border-width: 1px;
+    border-color: #555555;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    transform: rotate(45deg);
+}
+
+
+.philturz-list {
   list-style: none;
-  margin: 50px 0 0;
+  margin: 15px 0 0;
   padding: 0;
 }
-#scholarship-list > ul > li + li {
-  margin-top: 15px;
+.philturz-item {
+  border: 1px solid #555555;
+  border-bottom-width: 0;
+  background-color: #F0FAFE;
 }
-#scholarship-list > ul > li > ul {
+.philturz-item:last-child {
+  border-bottom-width: 1px;
+}
+.philturz-item:nth-child(even) {
+  background-color: #CDEBF7;
+}
+.philturz-item > ul {
   list-style: none;
   margin: 0;
   padding: 15px;
-  background-color: lightyellow;
 }
-#scholarship-list .philturz__hidden {
-  display: none;
+.philturz-item > ul > li {
+  font-size: 0;
+}
+.philturz-item > ul > li + li {
+  margin-top: 10px;
+}
+.philturz-item > ul > li > label,
+.philturz-item > ul > li > span {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 16px;
+  vertical-align: top;
+}
+.philturz-item > ul > li > label {
+  width: 30%;
+  font-weight: bold;
+}
+.philturz-item > ul > li > span {
+  width: 70%;
+  padding-left: 10px;
 }

@@ -2,9 +2,19 @@
   var _cfg = {
     singleType: 'single',
     multipleType: 'multiple',
-    hiddenClass: 'philturz__hidden',
-    itemSelector: '.philturz__item',
-    filterSelector: '.philturz__filter',
+    classes: {
+      hidden: 'philturz-hidden',
+      filters: {
+        singleType: 'philturz-filter-type-single',
+        multipleType: 'philturz-filter-type-multiple',
+        label: 'philturz-filter-label',
+        control: 'philturz-filter-control',
+        controlLabel: 'philturz-filter-control-label',
+        controlInput: 'philturz-filter-control-input'
+      }
+    },
+    itemSelector: '.philturz-item',
+    filterSelector: '.philturz-filter',
     attributePrefix: 'data-philturz-',
     listDelimiter: '; ',
     emptyValue: '',
@@ -57,9 +67,9 @@
     });
 
     if (isHidden) {
-      item.classList.add(_cfg.hiddenClass);
+      item.classList.add(_cfg.classes.hidden);
     } else {
-      item.classList.remove(_cfg.hiddenClass);
+      item.classList.remove(_cfg.classes.hidden);
     }
   }
 
@@ -167,16 +177,25 @@
 
     var label = document.createElement('label');
     var labelText = document.createTextNode(attributes.label);
+    label.classList.add(_cfg.classes.filters.label);
     label.appendChild(labelText);
+    filterElement.appendChild(label);
 
     switch(attributes.type) {
       case _cfg.singleType:
+        var control = document.createElement('div');
         var select = document.createElement('select');
-        select.autocomplete = 'off';
         var emptyOption = document.createElement('option');
+
+        filterElement.classList.add(_cfg.classes.filters.singleType);
+        control.classList.add(_cfg.classes.filters.control);
+        select.classList.add(_cfg.classes.filters.controlInput);
+        select.autocomplete = 'off';
+        
         emptyOption.value = _cfg.emptyValue;
         emptyOption.text = attributes.emptyLabel;
         select.appendChild(emptyOption);
+
         attributes.values.forEach(function(value) {
           var option = document.createElement('option');
           option.value = value;
@@ -184,29 +203,34 @@
           select.appendChild(option);
         });
 
-        filterElement.appendChild(label);
-        filterElement.appendChild(select);
+        control.appendChild(select);
+        filterElement.appendChild(control);
 
         select.addEventListener('change', onFilterChange(attributes.key));
         break;
       case _cfg.multipleType:
-        var group = document.createElement('div');
         attributes.values.forEach(function(value) {
+          var control = document.createElement('div');
           var checkboxLabel = document.createElement('label');
           var checkboxLabelText = document.createTextNode(value);
           var checkbox = document.createElement('input');
-          
+
+          filterElement.classList.add(_cfg.classes.filters.multipleType);
+          control.classList.add(_cfg.classes.filters.control);
+          checkboxLabel.classList.add(_cfg.classes.filters.controlLabel);
+          checkbox.classList.add(_cfg.classes.filters.controlInput);
+
           checkbox.type = 'checkbox';
           checkbox.autocomplete = 'off';
           checkbox.value = value;
+
           checkboxLabel.appendChild(checkbox);
           checkboxLabel.appendChild(checkboxLabelText);
+          control.appendChild(checkboxLabel);
+          filterElement.appendChild(control);
           
           checkbox.addEventListener('change', onFilterMultipleChange(attributes.key));
-
-          group.appendChild(checkboxLabel);
         });
-        filterElement.appendChild(group);
         break;
     }
   });
