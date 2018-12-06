@@ -93,6 +93,23 @@ body {
     border-bottom-style: solid;
     transform: rotate(45deg);
 }
+.philturz-filters-reset {
+  width: 100%;
+  height: 40px;
+  padding: 10px 15px;
+  line-height: 1;
+  font-style: italic;
+  text-align: center;
+  background-color: #FFFFFF;
+  border: 1px solid #555555;
+  border-radius: 20px;
+  box-shadow: none;
+  margin-top: 20px;
+}
+.philturz-filters-reset:hover,
+.philturz-filters-reset:active {
+  background-color: #FCFCFC;
+}
 
 
 .philturz-list {
@@ -103,13 +120,13 @@ body {
 .philturz-item {
   border: 1px solid #555555;
   border-bottom-width: 0;
-  background-color: #F0FAFE;
+  background-color: #EEF7FC;
 }
 .philturz-item:last-child {
   border-bottom-width: 1px;
 }
 .philturz-item:nth-child(even) {
-  background-color: #CDEBF7;
+  background-color: #CDE9F6;
 }
 .philturz-item > ul {
   list-style: none;
