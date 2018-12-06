@@ -14,12 +14,13 @@
         controlLabel: 'philturz-filter-control-label',
         controlInput: 'philturz-filter-control-input',
         form: 'philturz-filters-form',
-        reset: 'philturz-filters-reset'
+        reset: 'philturz-filters-reset',
+        resetButton: 'philturz-filters-reset-button'
       },
       item: 'philturz-item'
     },
     attributePrefix: 'data-philturz-',
-    resetText: 'Reset filters',
+    resetButtonText: 'Reset filters',
     listDelimiter: '; ',
     emptyValue: '',
     emptyLabel: ''
@@ -266,11 +267,14 @@
       formElement.appendChild(childElement);
     });
 
-    var resetElement = document.createElement('input');
-    resetElement.type = 'reset';
-    resetElement.value = 'Reset filters';
+    var resetElement = document.createElement('div');
+    var resetButtonElement = document.createElement('input');
     resetElement.classList.add(_cfg.classes.filters.reset);
+    resetButtonElement.type = 'reset';
+    resetButtonElement.value = _cfg.resetButtonText;
+    resetButtonElement.classList.add(_cfg.classes.filters.resetButton);
 
+    resetElement.appendChild(resetButtonElement);
     formElement.appendChild(resetElement);
     filtersElement.appendChild(formElement);
   }
