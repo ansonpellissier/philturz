@@ -17,7 +17,8 @@
         reset: 'philturz-filters-reset',
         resetButton: 'philturz-filters-reset-button'
       },
-      item: 'philturz-item'
+      list: 'philturz-list',
+      listItem: 'philturz-list-item'
     },
     attributePrefix: 'data-philturz-',
     resetButtonText: 'Reset filters',
@@ -83,7 +84,7 @@
   }
 
   function filterItems() {
-    var items = Array.from(document.querySelectorAll(getClassSelector(_cfg.classes.item)));
+    var items = Array.from(document.querySelectorAll(getClassSelector(_cfg.classes.listItem)));
     items.forEach(filterItem);
   }
 
@@ -184,8 +185,19 @@
   /*
    * INIT
    */
-  function init() {
-    var filterElements = Array.from(document.querySelectorAll(getClassSelector(_cfg.classes.filters.filter)));
+  function init(filtersSelector, filterSelector, listSelector, itemSelector) {
+    var listElement = document.querySelector(listSelector);
+    var itemElements = Array.from(document.querySelectorAll(listSelector + ' ' + itemSelector));
+    var filtersElement = document.querySelector(filtersSelector);
+    var filterElements = Array.from(document.querySelectorAll(filtersSelector + ' ' + filterSelector));
+    var parentElement = filtersElement.parentNode;
+
+    listElement.classList.add(_cfg.classes.list);
+    filtersElement.classList.add(_cfg.classes.filters.filters);
+
+    itemElements.forEach(function(itemElement) {
+      itemElement.classList.add(_cfg.classes.listItem);
+    });
 
     filterElements.forEach(function(filterElement) {
       var attributes = {
@@ -199,6 +211,7 @@
       var label = document.createElement('label');
       var labelText = document.createTextNode(attributes.label);
       label.classList.add(_cfg.classes.filters.label);
+      filterElement.classList.add(_cfg.classes.filters.filter);
       label.appendChild(labelText);
       filterElement.appendChild(label);
 
@@ -249,7 +262,7 @@
             checkboxLabel.appendChild(checkboxLabelText);
             control.appendChild(checkboxLabel);
             filterElement.appendChild(control);
-            
+
             checkbox.addEventListener('change', getOnFilterMultipleChange(attributes.key));
           });
           break;
@@ -261,12 +274,6 @@
     formElement.addEventListener('reset', onResetClick);
     formElement.classList.add(_cfg.classes.filters.form);
 
-    var filtersElement = document.querySelector(getClassSelector(_cfg.classes.filters.filters));
-    var childElements = Array.from(filtersElement.children);
-    childElements.forEach(function(childElement) {
-      formElement.appendChild(childElement);
-    });
-
     var resetElement = document.createElement('div');
     var resetButtonElement = document.createElement('input');
     resetElement.classList.add(_cfg.classes.filters.reset);
@@ -275,9 +282,10 @@
     resetButtonElement.classList.add(_cfg.classes.filters.resetButton);
 
     resetElement.appendChild(resetButtonElement);
-    formElement.appendChild(resetElement);
-    filtersElement.appendChild(formElement);
+    filtersElement.appendChild(resetElement);
+    parentElement.insertBefore(formElement, filtersElement);
+    formElement.appendChild(filtersElement);
   }
 
-  init();
+  init('#scholarship-filters', '.scholarship-filter', '#scholarship-list', '.scholarship-list-item');
 })();

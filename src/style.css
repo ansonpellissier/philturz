@@ -14,6 +14,84 @@ body {
   color: #333333;
 }
 
+
+.scholarship-list {
+  margin-top: 15px;
+}
+.scholarship-list-header {
+  display: none;
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #174E8B;
+}
+.scholarship-list-item {
+  padding: 15px;
+  border: 1px solid #555555;
+  border-bottom-width: 0;
+  background-color: #EEF7FC;
+}
+.scholarship-list-item:last-child {
+  border-bottom-width: 1px;
+}
+.scholarship-list-item:nth-child(even) {
+  background-color: #CDE9F6;
+}
+.scholarship-list-item > div {
+  font-size: 0;
+}
+.scholarship-list-item > div + div {
+  margin-top: 10px;
+}
+.scholarship-list-item > div > label,
+.scholarship-list-item > div > span {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 16px;
+  vertical-align: top;
+}
+.scholarship-list-item > div > label {
+  width: 30%;
+  font-weight: bold;
+}
+.scholarship-list-item > div > span {
+  width: 70%;
+  padding-left: 10px;
+}
+@media screen and (min-width: 768px) {
+  .scholarship-list {
+    display: table;
+    width: 100%;
+  }
+  .scholarship-list-header,
+  .scholarship-list-item {
+    display: table-row;
+    width: 100%;
+    padding: 0;
+  }
+  .scholarship-list-header > div,
+  .scholarship-list-item > div {
+    display: table-cell;
+    box-sizing: border-box;
+    width: 18%;
+    padding: 15px;
+  }
+  .scholarship-list-header > div:first-child,
+  .scholarship-list-item > div:first-child {
+    width: 28%;
+  }
+  .scholarship-list-item > div + div {
+    margin-top: 0;
+  }
+  .scholarship-list-item > div > label {
+    display: none;
+  }
+  .scholarship-list-item > div > span {
+    width: 100%;
+    padding: 0;
+  }
+}
+
+
 .philturz-hidden {
   display: none !important;
 }
@@ -88,20 +166,20 @@ body {
   position: relative;
 }
 .philturz-filter-type-single .philturz-filter-control::after {
-    content: '';
-    position: absolute;
-    display: block;
-    width: 6px;
-    height: 6px;
-    top: 15px;
-    right: 15px;
-    font-size: 15px;
-    line-height: 1;
-    border-width: 1px;
-    border-color: #555555;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    transform: rotate(45deg);
+  content: '';
+  position: absolute;
+  display: block;
+  width: 6px;
+  height: 6px;
+  top: 15px;
+  right: 15px;
+  font-size: 15px;
+  line-height: 1;
+  border-width: 1px;
+  border-color: #555555;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  transform: rotate(45deg);
 }
 .philturz-filters-reset {
   width: 100%;
@@ -124,7 +202,7 @@ body {
   background-color: #FCFCFC;
 }
 @media screen and (min-width: 544px) {
-  .philturz-filters-form {
+  .philturz-filters {
     display: flex;
     flex-wrap: wrap;
   }
@@ -174,84 +252,5 @@ body {
   }
   .philturz-filter + .philturz-filter {
     margin-top: 0;
-  }
-}
-
-
-.philturz-list {
-  list-style: none;
-  margin: 15px 0 0;
-  padding: 0;
-}
-.philturz-item {
-  padding: 15px;
-  border: 1px solid #555555;
-  border-bottom-width: 0;
-  background-color: #EEF7FC;
-}
-.philturz-item:last-child {
-  border-bottom-width: 1px;
-}
-.philturz-item:nth-child(even) {
-  background-color: #CDE9F6;
-}
-.philturz-item > div {
-  font-size: 0;
-}
-.philturz-item > div + div {
-  margin-top: 10px;
-}
-.philturz-item > div > label,
-.philturz-item > div > span {
-  box-sizing: border-box;
-  display: inline-block;
-  font-size: 16px;
-  vertical-align: top;
-}
-.philturz-item > div > label {
-  width: 30%;
-  font-weight: bold;
-}
-.philturz-item > div > span {
-  width: 70%;
-  padding-left: 10px;
-}
-.scholarship-list-header {
-  display: none;
-  font-weight: bold;
-  color: #FFFFFF;
-  background-color: #174E8B;
-}
-@media screen and (min-width: 768px) {
-  .philturz-list {
-    display: table;
-    width: 100%;
-  }
-  .scholarship-list-header,
-  .philturz-item {
-    display: table-row;
-    width: 100%;
-    padding: 0;
-  }
-  .scholarship-list-header > div,
-  .philturz-item > div {
-    display: table-cell;
-    box-sizing: border-box;
-    width: 18%;
-    padding: 15px;
-  }
-  .scholarship-list-header > div:first-child,
-  .philturz-item > div:first-child {
-    width: 28%;
-  }
-  .philturz-item > div + div {
-    margin-top: 0;
-  }
-  .philturz-item > div > label {
-    display: none;
-  }
-  .philturz-item > div > span {
-    width: 100%;
-    padding: 0;
   }
 }
