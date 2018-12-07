@@ -1,28 +1,35 @@
 (function() {
   var _cfg = {
-    singleType: 'single',
-    multipleType: 'multiple',
+    selectors: {},
+    types: {
+      single: 'single',
+      multiple: 'multiple',
+    },
     classes: {
-      hidden: 'philturz-hidden',
-      filters: {
-        filters: 'philturz-filters',
+      filter: {
         filter: 'philturz-filter',
-        singleType: 'philturz-filter-type-single',
-        multipleType: 'philturz-filter-type-multiple',
-        label: 'philturz-filter-label',
-        control: 'philturz-filter-control',
-        controlLabel: 'philturz-filter-control-label',
-        controlInput: 'philturz-filter-control-input',
-        form: 'philturz-filters-form',
-        reset: 'philturz-filters-reset',
-        resetButton: 'philturz-filters-reset-button'
+        item: {
+          item: 'philturz-filter-item',
+          singleType: 'philturz-filter-item-type-single',
+          multipleType: 'philturz-filter-item-type-multiple',
+          label: 'philturz-filter-item-label',
+          control: 'philturz-filter-item-control',
+          controlLabel: 'philturz-filter-item-control-label',
+          controlInput: 'philturz-filter-item-control-input'
+        },
+        form: 'philturz-filter-form',
+        reset: 'philturz-filter-reset',
+        resetButton: 'philturz-filter-reset-button'
       },
-      list: 'philturz-list',
-      listItem: 'philturz-list-item'
+      list: {
+        list: 'philturz-list',
+        item: 'philturz-list-item',
+        itemEven: 'philturz-list-item-even'
+      }
     },
     attributePrefix: 'data-philturz-',
     resetButtonText: 'Reset filters',
-    listDelimiter: '; ',
+    valueListDelimiter: '; ',
     emptyValue: '',
     emptyLabel: ''
   };
@@ -32,8 +39,8 @@
   /*
    * UTILS
    */
-  function valuesFromList(list) {
-    return list === _cfg.emptyValue ? [] : list.split(_cfg.listDelimiter);
+  function valuesFromValueList(valueList) {
+    return valueList === _cfg.emptyValue ? [] : valueList.split(_cfg.valueListDelimiter);
   }
 
   function valuesEqual(a, b) {
@@ -48,44 +55,54 @@
     return typeof filterValue === 'string';
   }
 
-  function getClassSelector(className) {
-    return '.' + className;
-  }
-
 
   /*
    * FILTER APPLICATION
    */
-  function filterItemValues(itemValues, filterValue) {
+  function setEvenListItems() {
+    var even = false;
+    var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems + ':not([hidden])'));
+    listItems.forEach(function(listItem) {
+      if (even) {
+        listItem.classList.add(_cfg.classes.list.itemEven);
+      } else {
+        listItem.classList.remove(_cfg.classes.list.itemEven);
+      }
+      even = !even;
+    })
+  }
+
+  function filterListItemValues(itemValues, filterValue) {
     var compareFn = isSimpleFilterValue() ? valuesEqual : valueInValues;
     return itemValues.some(function(itemValue) {
       return compareFn(filterValue, itemValue);
     });
   }
 
-  function filterItem(item) {
+  function filterListItem(listItem) {
     var isHidden = false;
 
     _filters.some(function(filter) {
       var attribute = _cfg.attributePrefix + filter.key;
-      var itemValues = valuesFromList(item.attributes[attribute].value);
-      if (itemValues.length === 0) return false;
-      var isMatch = filterItemValues(itemValues, filter.value);
+      var listItemValues = valuesFromValueList(listItem.attributes[attribute].value);
+      if (listItemValues.length === 0) return false;
+      var isMatch = filterListItemValues(listItemValues, filter.value);
       if (isMatch) return false;
       isHidden = true;
       return true;
     });
 
     if (isHidden) {
-      item.classList.add(_cfg.classes.hidden);
+      listItem.setAttribute('hidden', '');
     } else {
-      item.classList.remove(_cfg.classes.hidden);
+      listItem.removeAttribute('hidden');
     }
   }
 
-  function filterItems() {
-    var items = Array.from(document.querySelectorAll(getClassSelector(_cfg.classes.listItem)));
-    items.forEach(filterItem);
+  function filterListItems() {
+    var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
+    listItems.forEach(filterListItem);
+    setEvenListItems();
   }
 
 
@@ -148,7 +165,7 @@
   /*
    * EVENT LISTENERS
    */
-  function getOnFilterChange(key) {
+  function getOnFilterItemChange(key) {
     return function(e) {
       var value = e.target.value;
       if (value === _cfg.emptyValue) {
@@ -159,25 +176,24 @@
         });
         _filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
       }
-      filterItems();
+      filterListItems();
     };
   }
 
-  function getOnFilterMultipleChange(key) {
+  function getOnFilterItemMultipleChange(key) {
     return function(e) {
       var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
       addRemoveFn(key, e.target.value);
-      filterItems();
+      filterListItems();
     };
   }
 
   function onResetClick() {
     _filters = [];
-    filterItems();
+    filterListItems();
   }
 
   function onFormSubmit(e) {
-    console.log('Test');
     e.preventDefault();
   }
 
@@ -185,45 +201,52 @@
   /*
    * INIT
    */
-  function init(filtersSelector, filterSelector, listSelector, itemSelector) {
-    var listElement = document.querySelector(listSelector);
-    var itemElements = Array.from(document.querySelectorAll(listSelector + ' ' + itemSelector));
-    var filtersElement = document.querySelector(filtersSelector);
-    var filterElements = Array.from(document.querySelectorAll(filtersSelector + ' ' + filterSelector));
-    var parentElement = filtersElement.parentNode;
+  function init(filterId, filterItemClass, listId, listItemClass) {
+    _cfg.selectors.filterId = '#' + filterId;
+    _cfg.selectors.filterItem = '.' + filterItemClass;
+    _cfg.selectors.filterItems = _cfg.selectors.filterId + ' ' + _cfg.selectors.filterItem;
+    _cfg.selectors.listId = '#' + listId;
+    _cfg.selectors.listItem = '.' + listItemClass;
+    _cfg.selectors.listItems = _cfg.selectors.listId + ' ' + _cfg.selectors.listItem;
 
-    listElement.classList.add(_cfg.classes.list);
-    filtersElement.classList.add(_cfg.classes.filters.filters);
+    var list = document.querySelector(_cfg.selectors.listId);
+    var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
+    var filter = document.querySelector(_cfg.selectors.filterId);
+    var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
+    var filterParent = filter.parentNode;
 
-    itemElements.forEach(function(itemElement) {
-      itemElement.classList.add(_cfg.classes.listItem);
+    list.classList.add(_cfg.classes.list.list);
+    filter.classList.add(_cfg.classes.filter.filter);
+
+    listItems.forEach(function(listItem) {
+      listItem.classList.add(_cfg.classes.list.item);
     });
 
-    filterElements.forEach(function(filterElement) {
+    filterItems.forEach(function(filterItem) {
       var attributes = {
-        key: filterElement.dataset.philturzKey,
-        type: filterElement.dataset.philturzType,
-        label: filterElement.dataset.philturzLabel,
-        emptyLabel: filterElement.dataset.philturzEmptyLabel || _cfg.emptyLabel,
-        values: filterElement.dataset.philturzValues.split(_cfg.listDelimiter)
+        key: filterItem.dataset.philturzKey,
+        type: filterItem.dataset.philturzType,
+        label: filterItem.dataset.philturzLabel,
+        emptyLabel: filterItem.dataset.philturzEmptyLabel || _cfg.emptyLabel,
+        values: filterItem.dataset.philturzValues.split(_cfg.valueListDelimiter)
       };
 
       var label = document.createElement('label');
       var labelText = document.createTextNode(attributes.label);
-      label.classList.add(_cfg.classes.filters.label);
-      filterElement.classList.add(_cfg.classes.filters.filter);
+      label.classList.add(_cfg.classes.filter.item.label);
+      filterItem.classList.add(_cfg.classes.filter.item.item);
       label.appendChild(labelText);
-      filterElement.appendChild(label);
+      filterItem.appendChild(label);
 
       switch(attributes.type) {
-        case _cfg.singleType:
+        case _cfg.types.single:
           var control = document.createElement('div');
           var select = document.createElement('select');
           var emptyOption = document.createElement('option');
 
-          filterElement.classList.add(_cfg.classes.filters.singleType);
-          control.classList.add(_cfg.classes.filters.control);
-          select.classList.add(_cfg.classes.filters.controlInput);
+          filterItem.classList.add(_cfg.classes.filter.item.singleType);
+          control.classList.add(_cfg.classes.filter.item.control);
+          select.classList.add(_cfg.classes.filter.item.controlInput);
           select.autocomplete = 'off';
           
           emptyOption.value = _cfg.emptyValue;
@@ -238,21 +261,21 @@
           });
 
           control.appendChild(select);
-          filterElement.appendChild(control);
+          filterItem.appendChild(control);
 
-          select.addEventListener('change', getOnFilterChange(attributes.key));
+          select.addEventListener('change', getOnFilterItemChange(attributes.key));
           break;
-        case _cfg.multipleType:
+        case _cfg.types.multiple:
           attributes.values.forEach(function(value) {
             var control = document.createElement('div');
             var checkboxLabel = document.createElement('label');
             var checkboxLabelText = document.createTextNode(value);
             var checkbox = document.createElement('input');
 
-            filterElement.classList.add(_cfg.classes.filters.multipleType);
-            control.classList.add(_cfg.classes.filters.control);
-            checkboxLabel.classList.add(_cfg.classes.filters.controlLabel);
-            checkbox.classList.add(_cfg.classes.filters.controlInput);
+            filterItem.classList.add(_cfg.classes.filter.item.multipleType);
+            control.classList.add(_cfg.classes.filter.item.control);
+            checkboxLabel.classList.add(_cfg.classes.filter.item.controlLabel);
+            checkbox.classList.add(_cfg.classes.filter.item.controlInput);
 
             checkbox.type = 'checkbox';
             checkbox.autocomplete = 'off';
@@ -261,31 +284,35 @@
             checkboxLabel.appendChild(checkbox);
             checkboxLabel.appendChild(checkboxLabelText);
             control.appendChild(checkboxLabel);
-            filterElement.appendChild(control);
+            filterItem.appendChild(control);
 
-            checkbox.addEventListener('change', getOnFilterMultipleChange(attributes.key));
+            checkbox.addEventListener('change', getOnFilterItemMultipleChange(attributes.key));
           });
           break;
       }
     });
 
-    var formElement = document.createElement('form');
-    formElement.addEventListener('submit', onFormSubmit);
-    formElement.addEventListener('reset', onResetClick);
-    formElement.classList.add(_cfg.classes.filters.form);
+    var form = document.createElement('form');
+    var reset = document.createElement('div');
+    var resetButton = document.createElement('input');
 
-    var resetElement = document.createElement('div');
-    var resetButtonElement = document.createElement('input');
-    resetElement.classList.add(_cfg.classes.filters.reset);
-    resetButtonElement.type = 'reset';
-    resetButtonElement.value = _cfg.resetButtonText;
-    resetButtonElement.classList.add(_cfg.classes.filters.resetButton);
+    form.addEventListener('submit', onFormSubmit);
+    form.addEventListener('reset', onResetClick);
 
-    resetElement.appendChild(resetButtonElement);
-    filtersElement.appendChild(resetElement);
-    parentElement.insertBefore(formElement, filtersElement);
-    formElement.appendChild(filtersElement);
+    form.classList.add(_cfg.classes.filter.form);
+    reset.classList.add(_cfg.classes.filter.reset);
+
+    resetButton.type = 'reset';
+    resetButton.value = _cfg.resetButtonText;
+    resetButton.classList.add(_cfg.classes.filter.resetButton);
+
+    reset.appendChild(resetButton);
+    filter.appendChild(reset);
+    filterParent.insertBefore(form, filter);
+    form.appendChild(filter);
+
+    setEvenListItems();
   }
 
-  init('#scholarship-filters', '.scholarship-filter', '#scholarship-list', '.scholarship-list-item');
+  init('scholarship-filter', 'scholarship-filter-item', 'scholarship-list', 'scholarship-list-item');
 })();

@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div id="scholarship-filters" class="scholarship-filters">
+    <div id="scholarship-filter" class="scholarship-filters">
       <div
-        class="scholarship-filter"
+        class="scholarship-filter-item"
         data-philturz-key="study-level"
         data-philturz-type="single"
         data-philturz-label="Study level"
@@ -18,7 +18,7 @@
         data-philturz-values="Certificate; Diploma; Undergraduate; Postgraduate; Higher degrees by research">
       </div>
       <div
-        class="scholarship-filter"
+        class="scholarship-filter-item"
         data-philturz-key="student-status"
         data-philturz-type="single"
         data-philturz-label="Student status"
@@ -26,7 +26,7 @@
         data-philturz-values="Commencing; Current">
       </div>
       <div
-        class="scholarship-filter"
+        class="scholarship-filter-item"
         data-philturz-key="scholarship-type"
         data-philturz-type="single"
         data-philturz-label="Scholarship type"
@@ -34,7 +34,7 @@
         data-philturz-values="Academic merit; Access and equity">
       </div>
       <div
-        class="scholarship-filter"
+        class="scholarship-filter-item"
         data-philturz-key="student-type"
         data-philturz-type="single"
         data-philturz-label="Student type"
@@ -42,7 +42,7 @@
         data-philturz-values="Domestic; International">
       </div>
       <div
-        class="scholarship-filter"
+        class="scholarship-filter-item"
         data-philturz-key="school"
         data-philturz-type="multiple"
         data-philturz-label="School"
@@ -50,7 +50,7 @@
       </div>
     </div>
     <div id="scholarship-list" class="scholarship-list">
-      <div class="scholarship-list-header">
+      <div class="scholarship-list-header" aria-hidden="true">
         <div>Name</div>
         <div>Annual value</div>
         <div>Duration</div>

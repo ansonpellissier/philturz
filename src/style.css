@@ -4,13 +4,18 @@ body {
 }
 
 
-#scholarship-filters,
-#scholarship-list,
-#scholarship-list a,
-#scholarship-list a:link,
-#scholarship-list a:visited,
-#scholarship-list a:hover,
-#scholarship-list a:active {
+[hidden] {
+  display: none !important;
+}
+
+
+.scholarship-filter,
+.scholarship-list,
+.scholarship-list a,
+.scholarship-list a:link,
+.scholarship-list a:visited,
+.scholarship-list a:hover,
+.scholarship-list a:active {
   color: #333333;
 }
 
@@ -33,7 +38,7 @@ body {
 .scholarship-list-item:last-child {
   border-bottom-width: 1px;
 }
-.scholarship-list-item:nth-child(even) {
+.scholarship-list-item.philturz-list-item-even {
   background-color: #CDE9F6;
 }
 .scholarship-list-item > div {
@@ -92,64 +97,59 @@ body {
 }
 
 
-.philturz-hidden {
-  display: none !important;
-}
-
-
-.philturz-filters,
+.philturz-filter,
 .philturz-list {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
 }
-.philturz-filters {
+.philturz-filter {
   padding: 15px;
 }
-.philturz-filter + .philturz-filter {
+.philturz-filter-item + .philturz-filter-item {
   margin-top: 10px;
 }
-.philturz-filter + .philturz-filter.philturz-filter-type-multiple {
+.philturz-filter-item + .philturz-filter-item.philturz-filter-item-type-multiple {
   margin-top: 20px;
 }
-.philturz-filter-type-single .philturz-filter-label {
+.philturz-filter-item-type-single .philturz-filter-item-label {
   display: none;
 }
-.philturz-filter-label {
+.philturz-filter-item-label {
   font-weight: bold;
 }
-.philturz-filter-type-multiple .philturz-filter-label {
+.philturz-filter-item-type-multiple .philturz-filter-item-label {
   padding-left: 15px;
   padding-right: 15px;
 }
-.philturz-filter-type-multiple .philturz-filter-control {
+.philturz-filter-item-type-multiple .philturz-filter-item-control {
   margin-top: 15px;
   padding-left: 10px;
   padding-right: 15px;
 }
-.philturz-filter-type-multiple .philturz-filter-control:first-of-type {
+.philturz-filter-item-type-multiple .philturz-filter-item-control:first-of-type {
   border-top: 1px solid #555555;
   padding-top: 15px;
   margin-top: 10px;
 }
-.philturz-filter-control-label {
+.philturz-filter-item-control-label {
   position: relative;
   display: inline-block;
   padding-left: 25px;
 }
-.philturz-filter-control-label .philturz-filter-control-input {
+.philturz-filter-item-control-label .philturz-filter-item-control-input {
   position: absolute;
   left: 0;
 }
-.philturz-filter-type-single .philturz-filter-control-input {
+.philturz-filter-item-type-single .philturz-filter-item-control-input {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
-.philturz-filter-type-single .philturz-filter-control-input::-ms-expand {
+.philturz-filter-item-type-single .philturz-filter-item-control-input::-ms-expand {
   display: none;
 }
-.philturz-filter-type-single .philturz-filter-control-input {
+.philturz-filter-item-type-single .philturz-filter-item-control-input {
   position: relative;
   width: 100%;
   height: 40px;
@@ -162,10 +162,10 @@ body {
   background: transparent;
   z-index: 1;
 }
-.philturz-filter-type-single .philturz-filter-control {
+.philturz-filter-item-type-single .philturz-filter-item-control {
   position: relative;
 }
-.philturz-filter-type-single .philturz-filter-control::after {
+.philturz-filter-item-type-single .philturz-filter-item-control::after {
   content: '';
   position: absolute;
   display: block;
@@ -181,11 +181,11 @@ body {
   border-bottom-style: solid;
   transform: rotate(45deg);
 }
-.philturz-filters-reset {
+.philturz-filter-reset {
   width: 100%;
   margin-top: 30px;
 }
-.philturz-filters-reset-button {
+.philturz-filter-reset-button {
   width: 100%;
   height: 40px;
   padding: 10px 15px;
@@ -197,60 +197,60 @@ body {
   border-radius: 20px;
   box-shadow: none;
 }
-.philturz-filters-reset-button:hover,
-.philturz-filters-reset-button:active {
+.philturz-filter-reset-button:hover,
+.philturz-filter-reset-button:active {
   background-color: #FCFCFC;
 }
 @media screen and (min-width: 544px) {
-  .philturz-filters {
+  .philturz-filter {
     display: flex;
     flex-wrap: wrap;
   }
-  .philturz-filter {
+  .philturz-filter-item {
     box-sizing: border-box;
     width: 50%;
   }
-  .philturz-filter.philturz-filter-type-multiple {
+  .philturz-filter-item.philturz-filter-item-type-multiple {
     width: 100%;
   }
-  .philturz-filter + .philturz-filter:nth-child(2) {
+  .philturz-filter-item + .philturz-filter-item:nth-child(2) {
     margin-top: 0;
   }
-  .philturz-filter:nth-child(2n - 1).philturz-filter-type-single {
+  .philturz-filter-item:nth-child(2n - 1).philturz-filter-item-type-single {
     padding-right: 5px;
   }
-  .philturz-filter:nth-child(2n).philturz-filter-type-single {
+  .philturz-filter-item:nth-child(2n).philturz-filter-item-type-single {
     padding-left: 5px;
   }
-  .philturz-filters-reset {
+  .philturz-filter-reset {
     text-align: right;
   }
-  .philturz-filters-reset-button {
+  .philturz-filter-reset-button {
     width: 200px;
   }
 }
 @media screen and (min-width: 768px) {
-  .philturz-filter.philturz-filter-type-single {
+  .philturz-filter-item.philturz-filter-item-type-single {
     width: 25%;
     padding-left: 5px;
     padding-right: 5px;
   }
-  .philturz-filter:nth-child(4n - 3).philturz-filter-type-single {
+  .philturz-filter-item:nth-child(4n - 3).philturz-filter-item-type-single {
     padding-left: 0;
   }
-  .philturz-filter:nth-child(4n).philturz-filter-type-single {
+  .philturz-filter-item:nth-child(4n).philturz-filter-item-type-single {
     padding-right: 0;
   }
-  .philturz-filter.philturz-filter-type-multiple {
+  .philturz-filter-item.philturz-filter-item-type-multiple {
     width: 50%;
   }
-  .philturz-filter:nth-child(2n - 1).philturz-filter-type-multiple {
+  .philturz-filter-item:nth-child(2n - 1).philturz-filter-item-type-multiple {
     padding-right: 5px;
   }
-  .philturz-filter:nth-child(2n).philturz-filter-type-multiple {
+  .philturz-filter-item:nth-child(2n).philturz-filter-item-type-multiple {
     padding-left: 5px;
   }
-  .philturz-filter + .philturz-filter {
+  .philturz-filter-item + .philturz-filter-item {
     margin-top: 0;
   }
 }
