@@ -2,10 +2,9 @@ body {
   margin: 0;
   padding: 5px;
 }
-
-
-[hidden] {
-  display: none !important;
+.wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 
@@ -18,8 +17,6 @@ body {
 .scholarship-list a:active {
   color: #333333;
 }
-
-
 .scholarship-list {
   margin-top: 15px;
 }
@@ -101,9 +98,6 @@ body {
 .philturz-list {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
-}
-.philturz-filter {
-  padding: 15px;
 }
 .philturz-filter-item + .philturz-filter-item {
   margin-top: 10px;
@@ -252,5 +246,8 @@ body {
   }
   .philturz-filter-item + .philturz-filter-item {
     margin-top: 0;
+  }
+  .philturz-filter-item + .philturz-filter-item:nth-child(1n + 5) {
+    margin-top: 10px;
   }
 }

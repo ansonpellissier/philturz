@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Philturz</title>
+    <link rel="stylesheet" href="philturz.css">
+    <link rel="stylesheet" href="demo.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div id="scholarship-filter" class="scholarship-filters">
+        <div
+          class="scholarship-filter-item"
+          data-philturz-key="study-level"
+          data-philturz-type="single"
+          data-philturz-label="Study level"
+          data-philturz-empty-label="Select study level..."
+          data-philturz-values="Certificate; Diploma; Undergraduate; Postgraduate; Higher degrees by research">
+        </div>
+        <div
+          class="scholarship-filter-item"
+          data-philturz-key="student-status"
+          data-philturz-type="single"
+          data-philturz-label="Student status"
+          data-philturz-empty-label="Select student status..."
+          data-philturz-values="Commencing; Current">
+        </div>
+        <div
+          class="scholarship-filter-item"
+          data-philturz-key="scholarship-type"
+          data-philturz-type="single"
+          data-philturz-label="Scholarship type"
+          data-philturz-empty-label="Select scholarship type..."
+          data-philturz-values="Academic merit; Access and equity">
+        </div>
+        <div
+          class="scholarship-filter-item"
+          data-philturz-key="student-type"
+          data-philturz-type="single"
+          data-philturz-label="Student type"
+          data-philturz-empty-label="Select student type..."
+          data-philturz-values="Domestic; International">
+        </div>
+        <div
+          class="scholarship-filter-item"
+          data-philturz-key="school"
+          data-philturz-type="multiple"
+          data-philturz-label="School"
+          data-philturz-values="School of Business; School of Arts; School of Health and Life Sciences; School of Nursing and Healthcare Professions; School of Science, Engineering and Information Technology">
+        </div>
+      </div>
+      <div id="scholarship-list" class="scholarship-list">
+        <div class="scholarship-list-header" aria-hidden="true">
+          <div>Name</div>
+          <div>Annual value</div>
+          <div>Duration</div>
+          <div>Open date</div>
+          <div>Close date</div>
+        </div>
+        <div
+          class="scholarship-list-item"
+          data-philturz-study-level="Undergraduate; Postgraduate"
+          data-philturz-student-status="Commencing"
+          data-philturz-scholarship-type="Academic merit"
+          data-philturz-student-type="Domestic"
+          data-philturz-school="School of Arts; School of Education; School of Health and Life Sciences; School of Nursing and Healthcare Professions; School of Science, Engineering and Information Technology; School of Business">
+          <div>
+            <label>Name</label>
+            <span><a href="#">High Achievers Scholarships - 80+ ATAR</a></span>
+          </div>
+          <div>
+            <label>Annual value</label>
+            <span>$15,000</span>
+          </div>
+          <div>
+            <label>Duration</label>
+            <span>1 year</span>
+          </div>
+          <div>
+            <label>Open date</label>
+            <span>03/12/2018</span>
+          </div>
+          <div>
+            <label>Close date</label>
+            <span>11/01/2019</span>
+          </div>
+        </div>
+        <div
+          class="scholarship-list-item"
+          data-philturz-study-level="Undergraduate; Postgraduate"
+          data-philturz-student-status="Commencing"
+          data-philturz-scholarship-type="Academic merit"
+          data-philturz-student-type="Domestic"
+          data-philturz-school="School of Nursing and Healthcare Professions; School of Science, Engineering and Information Technology">
+          <div>
+            <label>Name</label>
+            <span><a href="#">High Achievers Scholarships - 90+ ATAR</a></span>
+          </div>
+          <div>
+            <label>Annual value</label>
+            <span>$18,000</span>
+          </div>
+          <div>
+            <label>Duration</label>
+            <span>1 year</span>
+          </div>
+          <div>
+            <label>Open date</label>
+            <span>10/12/2018</span>
+          </div>
+          <div>
+            <label>Close date</label>
+            <span>18/01/2019</span>
+          </div>
+        </div>
+        <div
+          class="scholarship-list-item"
+          data-philturz-study-level="Undergraduate"
+          data-philturz-student-status="Current"
+          data-philturz-scholarship-type="Access and equity"
+          data-philturz-student-type="International"
+          data-philturz-school="School of Business">
+          <div>
+            <label>Name</label>
+            <span><a href="#">Dean's Scholarship</a></span>
+          </div>
+          <div>
+            <label>Annual value</label>
+            <span>$8,000</span>
+          </div>
+          <div>
+            <label>Duration</label>
+            <span>Normal course duration</span>
+          </div>
+          <div>
+            <label>Open date</label>
+            <span>07/01/2019</span>
+          </div>
+          <div>
+            <label>Close date</label>
+            <span>08/02/2019</span>
+          </div>
+        </div>
+        <div
+          class="scholarship-list-item"
+          data-philturz-study-level=""
+          data-philturz-student-status="Current"
+          data-philturz-scholarship-type="Access and equity"
+          data-philturz-student-type=""
+          data-philturz-school="">
+          <div>
+            <label>Name</label>
+            <span><a href="#">TEST SCHOLARSHIP</a></span>
+          </div>
+          <div>
+            <label>Annual value</label>
+            <span>$8,000</span>
+          </div>
+          <div>
+            <label>Duration</label>
+            <span>Normal course duration</span>
+          </div>
+          <div>
+            <label>Open date</label>
+            <span>07/01/2019</span>
+          </div>
+          <div>
+            <label>Close date</label>
+            <span>08/02/2019</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="philturz.js"></script>
+  </body>
+</html>
