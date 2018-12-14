@@ -1,0 +1,28 @@
+{
+  "name": "philturz",
+  "version": "0.1.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ansonpellissier/philturz.git"
+  },
+  "author": "Anson Pellissier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ansonpellissier/philturz/issues"
+  },
+  "homepage": "https://github.com/ansonpellissier/philturz#readme",
+  "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "babel-loader": "^8.0.4",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {}
+}

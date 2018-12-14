@@ -1,318 +1,314 @@
-(function() {
-  var _cfg = {
-    selectors: {},
-    types: {
-      single: 'single',
-      multiple: 'multiple',
-    },
-    classes: {
-      filter: {
-        filter: 'philturz-filter',
-        item: {
-          item: 'philturz-filter-item',
-          singleType: 'philturz-filter-item-type-single',
-          multipleType: 'philturz-filter-item-type-multiple',
-          label: 'philturz-filter-item-label',
-          control: 'philturz-filter-item-control',
-          controlLabel: 'philturz-filter-item-control-label',
-          controlInput: 'philturz-filter-item-control-input'
-        },
-        form: 'philturz-filter-form',
-        reset: 'philturz-filter-reset',
-        resetButton: 'philturz-filter-reset-button'
+var _cfg = {
+  selectors: {},
+  types: {
+    single: 'single',
+    multiple: 'multiple',
+  },
+  classes: {
+    filter: {
+      filter: 'philturz-filter',
+      item: {
+        item: 'philturz-filter-item',
+        singleType: 'philturz-filter-item-type-single',
+        multipleType: 'philturz-filter-item-type-multiple',
+        label: 'philturz-filter-item-label',
+        control: 'philturz-filter-item-control',
+        controlLabel: 'philturz-filter-item-control-label',
+        controlInput: 'philturz-filter-item-control-input'
       },
-      list: {
-        list: 'philturz-list',
-        item: 'philturz-list-item',
-        itemEven: 'philturz-list-item-even'
-      }
+      form: 'philturz-filter-form',
+      reset: 'philturz-filter-reset',
+      resetButton: 'philturz-filter-reset-button'
     },
-    attributePrefix: 'data-philturz-',
-    resetButtonText: 'Reset filters',
-    valueListDelimiter: '; ',
-    emptyValue: '',
-    emptyLabel: ''
-  };
-  var _filters = [];
-
-
-  /*
-   * UTILS
-   */
-  function valuesFromValueList(valueList) {
-    return valueList === _cfg.emptyValue ? [] : valueList.split(_cfg.valueListDelimiter);
-  }
-
-  function valuesEqual(a, b) {
-    return a === b;
-  }
-
-  function valueInValues(values, value) {
-    return (values.indexOf(value) !== -1);
-  }
-
-  function isSimpleFilterValue(filterValue) {
-    return typeof filterValue === 'string';
-  }
-
-
-  /*
-   * FILTER APPLICATION
-   */
-  function setEvenListItems() {
-    var even = false;
-    var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems + ':not([hidden])'));
-    listItems.forEach(function(listItem) {
-      if (even) {
-        listItem.classList.add(_cfg.classes.list.itemEven);
-      } else {
-        listItem.classList.remove(_cfg.classes.list.itemEven);
-      }
-      even = !even;
-    })
-  }
-
-  function filterListItemValues(itemValues, filterValue) {
-    var compareFn = isSimpleFilterValue() ? valuesEqual : valueInValues;
-    return itemValues.some(function(itemValue) {
-      return compareFn(filterValue, itemValue);
-    });
-  }
-
-  function filterListItem(listItem) {
-    var isHidden = false;
-
-    _filters.some(function(filter) {
-      var attribute = _cfg.attributePrefix + filter.key;
-      var listItemValues = valuesFromValueList(listItem.attributes[attribute].value);
-      if (listItemValues.length === 0) return false;
-      var isMatch = filterListItemValues(listItemValues, filter.value);
-      if (isMatch) return false;
-      isHidden = true;
-      return true;
-    });
-
-    if (isHidden) {
-      listItem.setAttribute('hidden', '');
-    } else {
-      listItem.removeAttribute('hidden');
+    list: {
+      list: 'philturz-list',
+      item: 'philturz-list-item',
+      itemEven: 'philturz-list-item-even'
     }
+  },
+  attributePrefix: 'data-philturz-',
+  resetButtonText: 'Reset filters',
+  valueListDelimiter: '; ',
+  emptyValue: '',
+  emptyLabel: ''
+};
+var _filters = [];
+
+
+/*
+ * UTILS
+ */
+function valuesFromValueList(valueList) {
+  return valueList === _cfg.emptyValue ? [] : valueList.split(_cfg.valueListDelimiter);
+}
+
+function valuesEqual(a, b) {
+  return a === b;
+}
+
+function valueInValues(values, value) {
+  return (values.indexOf(value) !== -1);
+}
+
+function isSimpleFilterValue(filterValue) {
+  return typeof filterValue === 'string';
+}
+
+
+/*
+ * FILTER APPLICATION
+ */
+function setEvenListItems() {
+  var even = false;
+  var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems + ':not([hidden])'));
+  listItems.forEach(function(listItem) {
+    if (even) {
+      listItem.classList.add(_cfg.classes.list.itemEven);
+    } else {
+      listItem.classList.remove(_cfg.classes.list.itemEven);
+    }
+    even = !even;
+  })
+}
+
+function filterListItemValues(itemValues, filterValue) {
+  var compareFn = isSimpleFilterValue() ? valuesEqual : valueInValues;
+  return itemValues.some(function(itemValue) {
+    return compareFn(filterValue, itemValue);
+  });
+}
+
+function filterListItem(listItem) {
+  var isHidden = false;
+
+  _filters.some(function(filter) {
+    var attribute = _cfg.attributePrefix + filter.key;
+    var listItemValues = valuesFromValueList(listItem.attributes[attribute].value);
+    if (listItemValues.length === 0) return false;
+    var isMatch = filterListItemValues(listItemValues, filter.value);
+    if (isMatch) return false;
+    isHidden = true;
+    return true;
+  });
+
+  if (isHidden) {
+    listItem.setAttribute('hidden', '');
+  } else {
+    listItem.removeAttribute('hidden');
   }
+}
 
-  function filterListItems() {
-    var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
-    listItems.forEach(filterListItem);
-    setEvenListItems();
-  }
+function filterListItems() {
+  var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
+  listItems.forEach(filterListItem);
+  setEvenListItems();
+}
 
 
-  /*
-   * FILTER SELECTIONS
-   */
-  function createFilter(key, value) {
-    return { key: key, value: value };
-  }
+/*
+ * FILTER SELECTIONS
+ */
+function createFilter(key, value) {
+  return { key: key, value: value };
+}
 
-  function addFilter(key, value) {
-    var filter = createFilter(key, value);
-    return _filters.concat(filter);
-  }
+function addFilter(key, value) {
+  var filter = createFilter(key, value);
+  return _filters.concat(filter);
+}
 
-  function updateFilter(key, value) {
-    return _filters.map(function(filter) {
-      var newValue = (filter.key === key) ? value : filter.value;
-      return createFilter(filter.key, newValue);
-    });
-  }
+function updateFilter(key, value) {
+  return _filters.map(function(filter) {
+    var newValue = (filter.key === key) ? value : filter.value;
+    return createFilter(filter.key, newValue);
+  });
+}
 
-  function removeFilter(key) {
-    return _filters.filter(function(filter) {
-      return filter.key !== key;
-    });
-  }
+function removeFilter(key) {
+  return _filters.filter(function(filter) {
+    return filter.key !== key;
+  });
+}
 
-  function addFilterMultiple(key, value) {
-    var isExisting = false;
-    var newFilters = _filters.map(function(filter) {
+function addFilterMultiple(key, value) {
+  var isExisting = false;
+  var newFilters = _filters.map(function(filter) {
+    var newValue = filter.value;
+    if (filter.key === key) {
+      isExisting = true;
+      var hasValue = filter.value.indexOf(value) !== -1;
+      if (!hasValue) newValue = newValue.concat(value);
+    }
+    return createFilter(filter.key, newValue);
+  });
+  _filters = isExisting ? newFilters : newFilters.concat(createFilter(key, [value]));
+}
+
+function removeFilterMultiple(key, value) {
+  _filters = _filters
+    .map(function(filter) {
       var newValue = filter.value;
       if (filter.key === key) {
-        isExisting = true;
-        var hasValue = filter.value.indexOf(value) !== -1;
-        if (!hasValue) newValue = newValue.concat(value);
+        newValue = newValue.filter(function(v) {
+          return v !== value;
+        });
       }
       return createFilter(filter.key, newValue);
+    })
+    .filter(function(filter) {
+      return filter.key !== key || filter.value.length > 0;
     });
-    _filters = isExisting ? newFilters : newFilters.concat(createFilter(key, [value]));
-  }
+}
 
-  function removeFilterMultiple(key, value) {
-    _filters = _filters
-      .map(function(filter) {
-        var newValue = filter.value;
-        if (filter.key === key) {
-          newValue = newValue.filter(function(v) {
-            return v !== value;
-          });
-        }
-        return createFilter(filter.key, newValue);
-      })
-      .filter(function(filter) {
-        return filter.key !== key || filter.value.length > 0;
+
+/*
+ * EVENT LISTENERS
+ */
+function getOnFilterItemChange(key) {
+  return function(e) {
+    var value = e.target.value;
+    if (value === _cfg.emptyValue) {
+      _filters = removeFilter(key);
+    } else {
+      var isIncluded = _filters.some(function(filter) {
+        return filter.key === key;
       });
-  }
-
-
-  /*
-   * EVENT LISTENERS
-   */
-  function getOnFilterItemChange(key) {
-    return function(e) {
-      var value = e.target.value;
-      if (value === _cfg.emptyValue) {
-        _filters = removeFilter(key);
-      } else {
-        var isIncluded = _filters.some(function(filter) {
-          return filter.key === key;
-        });
-        _filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
-      }
-      filterListItems();
-    };
-  }
-
-  function getOnFilterItemMultipleChange(key) {
-    return function(e) {
-      var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
-      addRemoveFn(key, e.target.value);
-      filterListItems();
-    };
-  }
-
-  function onResetClick() {
-    _filters = [];
+      _filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
+    }
     filterListItems();
-  }
+  };
+}
 
-  function onFormSubmit(e) {
-    e.preventDefault();
-  }
+function getOnFilterItemMultipleChange(key) {
+  return function(e) {
+    var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
+    addRemoveFn(key, e.target.value);
+    filterListItems();
+  };
+}
+
+function onResetClick() {
+  _filters = [];
+  filterListItems();
+}
+
+function onFormSubmit(e) {
+  e.preventDefault();
+}
 
 
-  /*
-   * INIT
-   */
-  function init(filterId, filterItemClass, listId, listItemClass) {
-    _cfg.selectors.filterId = '#' + filterId;
-    _cfg.selectors.filterItem = '.' + filterItemClass;
-    _cfg.selectors.filterItems = _cfg.selectors.filterId + ' ' + _cfg.selectors.filterItem;
-    _cfg.selectors.listId = '#' + listId;
-    _cfg.selectors.listItem = '.' + listItemClass;
-    _cfg.selectors.listItems = _cfg.selectors.listId + ' ' + _cfg.selectors.listItem;
+/*
+ * INIT
+ */
+export function init(filterId, filterItemClass, listId, listItemClass) {
+  _cfg.selectors.filterId = '#' + filterId;
+  _cfg.selectors.filterItem = '.' + filterItemClass;
+  _cfg.selectors.filterItems = _cfg.selectors.filterId + ' ' + _cfg.selectors.filterItem;
+  _cfg.selectors.listId = '#' + listId;
+  _cfg.selectors.listItem = '.' + listItemClass;
+  _cfg.selectors.listItems = _cfg.selectors.listId + ' ' + _cfg.selectors.listItem;
 
-    var list = document.querySelector(_cfg.selectors.listId);
-    var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
-    var filter = document.querySelector(_cfg.selectors.filterId);
-    var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
-    var filterParent = filter.parentNode;
+  var list = document.querySelector(_cfg.selectors.listId);
+  var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
+  var filter = document.querySelector(_cfg.selectors.filterId);
+  var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
+  var filterParent = filter.parentNode;
 
-    list.classList.add(_cfg.classes.list.list);
-    filter.classList.add(_cfg.classes.filter.filter);
+  list.classList.add(_cfg.classes.list.list);
+  filter.classList.add(_cfg.classes.filter.filter);
 
-    listItems.forEach(function(listItem) {
-      listItem.classList.add(_cfg.classes.list.item);
-    });
+  listItems.forEach(function(listItem) {
+    listItem.classList.add(_cfg.classes.list.item);
+  });
 
-    filterItems.forEach(function(filterItem) {
-      var attributes = {
-        key: filterItem.dataset.philturzKey,
-        type: filterItem.dataset.philturzType,
-        label: filterItem.dataset.philturzLabel,
-        emptyLabel: filterItem.dataset.philturzEmptyLabel || _cfg.emptyLabel,
-        values: filterItem.dataset.philturzValues.split(_cfg.valueListDelimiter)
-      };
+  filterItems.forEach(function(filterItem) {
+    var attributes = {
+      key: filterItem.dataset.philturzKey,
+      type: filterItem.dataset.philturzType,
+      label: filterItem.dataset.philturzLabel,
+      emptyLabel: filterItem.dataset.philturzEmptyLabel || _cfg.emptyLabel,
+      values: filterItem.dataset.philturzValues.split(_cfg.valueListDelimiter)
+    };
 
-      var label = document.createElement('label');
-      var labelText = document.createTextNode(attributes.label);
-      label.classList.add(_cfg.classes.filter.item.label);
-      filterItem.classList.add(_cfg.classes.filter.item.item);
-      label.appendChild(labelText);
-      filterItem.appendChild(label);
+    var label = document.createElement('label');
+    var labelText = document.createTextNode(attributes.label);
+    label.classList.add(_cfg.classes.filter.item.label);
+    filterItem.classList.add(_cfg.classes.filter.item.item);
+    label.appendChild(labelText);
+    filterItem.appendChild(label);
 
-      switch(attributes.type) {
-        case _cfg.types.single:
+    switch(attributes.type) {
+      case _cfg.types.single:
+        var control = document.createElement('div');
+        var select = document.createElement('select');
+        var emptyOption = document.createElement('option');
+
+        filterItem.classList.add(_cfg.classes.filter.item.singleType);
+        control.classList.add(_cfg.classes.filter.item.control);
+        select.classList.add(_cfg.classes.filter.item.controlInput);
+        select.autocomplete = 'off';
+        
+        emptyOption.value = _cfg.emptyValue;
+        emptyOption.text = attributes.emptyLabel;
+        select.appendChild(emptyOption);
+
+        attributes.values.forEach(function(value) {
+          var option = document.createElement('option');
+          option.value = value;
+          option.text = value;
+          select.appendChild(option);
+        });
+
+        control.appendChild(select);
+        filterItem.appendChild(control);
+
+        select.addEventListener('change', getOnFilterItemChange(attributes.key));
+        break;
+      case _cfg.types.multiple:
+        attributes.values.forEach(function(value) {
           var control = document.createElement('div');
-          var select = document.createElement('select');
-          var emptyOption = document.createElement('option');
+          var checkboxLabel = document.createElement('label');
+          var checkboxLabelText = document.createTextNode(value);
+          var checkbox = document.createElement('input');
 
-          filterItem.classList.add(_cfg.classes.filter.item.singleType);
+          filterItem.classList.add(_cfg.classes.filter.item.multipleType);
           control.classList.add(_cfg.classes.filter.item.control);
-          select.classList.add(_cfg.classes.filter.item.controlInput);
-          select.autocomplete = 'off';
-          
-          emptyOption.value = _cfg.emptyValue;
-          emptyOption.text = attributes.emptyLabel;
-          select.appendChild(emptyOption);
+          checkboxLabel.classList.add(_cfg.classes.filter.item.controlLabel);
+          checkbox.classList.add(_cfg.classes.filter.item.controlInput);
 
-          attributes.values.forEach(function(value) {
-            var option = document.createElement('option');
-            option.value = value;
-            option.text = value;
-            select.appendChild(option);
-          });
+          checkbox.type = 'checkbox';
+          checkbox.autocomplete = 'off';
+          checkbox.value = value;
 
-          control.appendChild(select);
+          checkboxLabel.appendChild(checkbox);
+          checkboxLabel.appendChild(checkboxLabelText);
+          control.appendChild(checkboxLabel);
           filterItem.appendChild(control);
 
-          select.addEventListener('change', getOnFilterItemChange(attributes.key));
-          break;
-        case _cfg.types.multiple:
-          attributes.values.forEach(function(value) {
-            var control = document.createElement('div');
-            var checkboxLabel = document.createElement('label');
-            var checkboxLabelText = document.createTextNode(value);
-            var checkbox = document.createElement('input');
+          checkbox.addEventListener('change', getOnFilterItemMultipleChange(attributes.key));
+        });
+        break;
+    }
+  });
 
-            filterItem.classList.add(_cfg.classes.filter.item.multipleType);
-            control.classList.add(_cfg.classes.filter.item.control);
-            checkboxLabel.classList.add(_cfg.classes.filter.item.controlLabel);
-            checkbox.classList.add(_cfg.classes.filter.item.controlInput);
+  var form = document.createElement('form');
+  var reset = document.createElement('div');
+  var resetButton = document.createElement('input');
 
-            checkbox.type = 'checkbox';
-            checkbox.autocomplete = 'off';
-            checkbox.value = value;
+  form.addEventListener('submit', onFormSubmit);
+  form.addEventListener('reset', onResetClick);
 
-            checkboxLabel.appendChild(checkbox);
-            checkboxLabel.appendChild(checkboxLabelText);
-            control.appendChild(checkboxLabel);
-            filterItem.appendChild(control);
+  form.classList.add(_cfg.classes.filter.form);
+  reset.classList.add(_cfg.classes.filter.reset);
 
-            checkbox.addEventListener('change', getOnFilterItemMultipleChange(attributes.key));
-          });
-          break;
-      }
-    });
+  resetButton.type = 'reset';
+  resetButton.value = _cfg.resetButtonText;
+  resetButton.classList.add(_cfg.classes.filter.resetButton);
 
-    var form = document.createElement('form');
-    var reset = document.createElement('div');
-    var resetButton = document.createElement('input');
+  reset.appendChild(resetButton);
+  filter.appendChild(reset);
+  filterParent.insertBefore(form, filter);
+  form.appendChild(filter);
 
-    form.addEventListener('submit', onFormSubmit);
-    form.addEventListener('reset', onResetClick);
-
-    form.classList.add(_cfg.classes.filter.form);
-    reset.classList.add(_cfg.classes.filter.reset);
-
-    resetButton.type = 'reset';
-    resetButton.value = _cfg.resetButtonText;
-    resetButton.classList.add(_cfg.classes.filter.resetButton);
-
-    reset.appendChild(resetButton);
-    filter.appendChild(reset);
-    filterParent.insertBefore(form, filter);
-    form.appendChild(filter);
-
-    setEvenListItems();
-  }
-
-  init('scholarship-filter', 'scholarship-filter-item', 'scholarship-list', 'scholarship-list-item');
-})();
+  setEvenListItems();
+}
