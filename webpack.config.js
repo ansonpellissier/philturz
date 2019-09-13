@@ -1,12 +1,13 @@
 const webpack = require('webpack');
 const path = require('path');
+const package = require('./package.json');
 
 module.exports = {
   mode: 'production',
   entry: './philturz.js',
   output: {
-    path: path.resolve(__dirname),
-    filename: 'philturz.min.js',
+    path: path.join(__dirname, 'dist'),
+    filename: `philturz-${package.version}.min.js`,
     libraryTarget: 'umd',
     library: 'philturz'
   },

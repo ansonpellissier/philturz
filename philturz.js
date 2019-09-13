@@ -201,12 +201,12 @@ function onFormSubmit(e) {
  * INIT
  */
 export function init(filterId, filterItemClass, listId, listItemClass) {
-  _cfg.selectors.filterId = '#' + filterId;
-  _cfg.selectors.filterItem = '.' + filterItemClass;
-  _cfg.selectors.filterItems = _cfg.selectors.filterId + ' ' + _cfg.selectors.filterItem;
-  _cfg.selectors.listId = '#' + listId;
-  _cfg.selectors.listItem = '.' + listItemClass;
-  _cfg.selectors.listItems = _cfg.selectors.listId + ' ' + _cfg.selectors.listItem;
+  _cfg.selectors.filterId = `#${filterId}`;
+  _cfg.selectors.filterItem = `.${filterItemClass}`;
+  _cfg.selectors.filterItems = `${_cfg.selectors.filterId} ${_cfg.selectors.filterItem}`;
+  _cfg.selectors.listId = `#${listId}`;
+  _cfg.selectors.listItem = `.${listItemClass}`;
+  _cfg.selectors.listItems = `${_cfg.selectors.listId} ${_cfg.selectors.listItem}`;
 
   var list = document.querySelector(_cfg.selectors.listId);
   var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));

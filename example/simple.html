@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Philturz</title>
+    <style>
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="car-filter">
+      <div
+        class="car-filter-item"
+        data-philturz-key="origin"
+        data-philturz-type="single"
+        data-philturz-label="Origin"
+        data-philturz-empty-label="Select origin..."
+        data-philturz-values="France; Germany; South Korea; Australia; Japan">
+      </div>
+      <div
+        class="car-filter-item"
+        data-philturz-key="type"
+        data-philturz-type="multiple"
+        data-philturz-label="Type"
+        data-philturz-values="Hatch; Sedan; SUV; 4WD; Wagon">
+      </div>
+    </div>
+
+    <ul id="car-list">
+      <li class="car-list-item" data-philturz-origin="Germany" data-philturz-type="Sedan">Mercedes C 300</li>
+      <li class="car-list-item" data-philturz-origin="South Korea" data-philturz-type="Hatch">Hyundai i30</li>
+      <li class="car-list-item" data-philturz-origin="Japan" data-philturz-type="4WD">Toyota Landcruiser</li>
+      <li class="car-list-item" data-philturz-origin="Japan" data-philturz-type="Wagon; 4WD">Subaru Forrester</li>
+    </ul>
+
+    <script type="text/javascript" src="/dist/philturz-0.1.0.min.js"></script>
+
+    <script>
+      philturz.init(
+        'car-filter',
+        'car-filter-item',
+        'car-list',
+        'car-list-item'
+      );
+    </script>
+  </body>
+</html>
