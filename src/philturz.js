@@ -14,25 +14,37 @@ var _cfg = {
         label: 'philturz-filter-item-label',
         control: 'philturz-filter-item-control',
         controlLabel: 'philturz-filter-item-control-label',
-        controlInput: 'philturz-filter-item-control-input'
+        controlInput: 'philturz-filter-item-control-input',
       },
       form: 'philturz-filter-form',
       reset: 'philturz-filter-reset',
-      resetButton: 'philturz-filter-reset-button'
+      resetButton: 'philturz-filter-reset-button',
     },
     list: {
       list: 'philturz-list',
       item: 'philturz-list-item',
-      itemEven: 'philturz-list-item-even'
+      itemEven: 'philturz-list-item-even',
     }
   },
   attributePrefix: 'data-philturz-',
   resetButtonText: 'Reset filters',
   valueListDelimiter: '; ',
   emptyValue: '',
-  emptyLabel: ''
+  emptyLabel: '',
+  events: {
+    change: 'philturzChange',
+    reset: 'philturzReset',
+  },
+  eventsDetail: {
+    filterItem: 'philturzFilterItem',
+    filterItemControl: 'philturzFilterItemControl',
+  },
 };
 var _filters = [];
+var _events = {
+  change: {},
+};
+var _elements = {};
 
 
 /*
@@ -162,11 +174,33 @@ function removeFilterMultiple(key, value) {
 
 
 /*
+ * CUSTOM EVENTS
+ */
+function raiseCustomEvent(type, key, detail = null) {
+  var element = _elements[_cfg.selectors.filterId];
+
+  var changeEvent = _events.change[key];
+
+  if (!changeEvent) {
+    changeEvent = _events.change[key] = new CustomEvent(type, { detail });
+
+    // // TODO: Remove this listener when done
+    // element.addEventListener(type, function(event) {
+    //   console.log(event);
+    // });
+  }
+
+  element.dispatchEvent(changeEvent);
+}
+
+
+/*
  * EVENT LISTENERS
  */
 function getOnFilterItemChange(key) {
   return function(e) {
     var value = e.target.value;
+    
     if (value === _cfg.emptyValue) {
       _filters = removeFilter(key);
     } else {
@@ -175,21 +209,38 @@ function getOnFilterItemChange(key) {
       });
       _filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
     }
+
     filterListItems();
+
+    var eventDetail = {
+      [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement,
+      [_cfg.eventsDetail.filterItemControl]: e.target,
+    };
+
+    raiseCustomEvent(_cfg.events.change, key, eventDetail);
   };
 }
 
 function getOnFilterItemMultipleChange(key) {
   return function(e) {
     var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
+    
     addRemoveFn(key, e.target.value);
     filterListItems();
+
+    var eventDetail = {
+      [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement.parentElement,
+      [_cfg.eventsDetail.filterItemControl]: e.target,
+    };
+    
+    raiseCustomEvent(_cfg.events.change, key, eventDetail);
   };
 }
 
-function onResetClick() {
+function onResetClick(e) {
   _filters = [];
   filterListItems();
+  raiseCustomEvent(_cfg.events.reset, 'reset');
 }
 
 function onFormSubmit(e) {
@@ -208,11 +259,13 @@ export function init(filterId, filterItemClass, listId, listItemClass) {
   _cfg.selectors.listItem = `.${listItemClass}`;
   _cfg.selectors.listItems = `${_cfg.selectors.listId} ${_cfg.selectors.listItem}`;
 
-  var list = document.querySelector(_cfg.selectors.listId);
+  var list = document.getElementById(listId);
   var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
-  var filter = document.querySelector(_cfg.selectors.filterId);
+  var filter = document.getElementById(filterId);
   var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
   var filterParent = filter.parentNode;
+
+  _elements[_cfg.selectors.filterId] = filter;
 
   list.classList.add(_cfg.classes.list.list);
   filter.classList.add(_cfg.classes.filter.filter);

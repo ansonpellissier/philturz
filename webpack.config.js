@@ -4,7 +4,7 @@ const package = require('./package.json');
 
 module.exports = {
   mode: 'production',
-  entry: './philturz.js',
+  entry: path.join(__dirname, 'src', 'philturz.js'),
   output: {
     path: path.join(__dirname, 'dist'),
     filename: `philturz-${package.version}.min.js`,
