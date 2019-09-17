@@ -49,21 +49,16 @@
     <script type="module">
       import { init } from './philturz.js';
 
-      init(
-        'car-filter',
-        'car-filter-item',
-        'car-list',
-        'car-list-item'
-      );
+      init('car-filter', 'car-filter-item', 'car-list', 'car-list-item');
       
       var element = document.getElementById('car-filter');
 
-      element.addEventListener('philturzChange', function(event) {
-        console.log(event);
+      element.addEventListener('philturzChange', function(e) {
+        console.log(e);
       });
       
-      element.addEventListener('philturzReset', function(event) {
-        console.log(event);
+      element.addEventListener('philturzReset', function(e) {
+        console.log(e);
       });
     </script>
   </body>

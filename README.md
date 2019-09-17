@@ -98,10 +98,58 @@ After this, the `init()` method of the **Philturz** library must be called to in
 3. `listId` - the ID of the HTML element which contains the individual list items.
 4. `listItemClass` - the Class used to denote an individual list item.
 
-An example is show below.
+An example is shown below.
 
 ```HTML
-<script>
+<script type="text/javascript">
   philturz.init('car-filter', 'car-filter-item', 'car-list', 'car-list-item');
 </script>
+```
+
+### Events
+
+There are two events that can be listened to:
+
+1. `philturzChange` - raised when any filter value is changed.
+2. `philturzReset` - raised when the **Reset filters** button is pressed.
+
+Both events will be raised against the element that contains the filters and is denoted by the `filterId` value.
+
+An example is shown below.
+
+```HTML
+<script type="text/javascript">
+  var carFilter = document.getElementById('car-filter');
+
+  carFilter.addEventListener('philturzChange', function(e) {
+    console.log(e);
+  });
+  
+  carFilter.addEventListener('philturzReset', function(e) {
+    console.log(e);
+  });
+</script>
+```
+
+The event provided to the `philturzChange` handler includes an object in the `detail` property. This object contains the following values.
+
+1. `philturzFilterItem` - the filter item element that contains the control that changed.
+2. `philturzFilterItemControl` - the control element that changed.
+
+From these elements you can determine the initial **Philturz** data attributes set for the filter item as well as the value and state of the control.
+
+For example.
+
+```JavaScript
+  carFilter.addEventListener('philturzChange', function(e) {
+    var type = e.detail.philturzFilterItem.dataset.philturzType;
+    var control = e.detail.philturzFilterItemControl;
+    var value = '';
+
+    if (type === 'single' || (type === 'multiple' && control.checked)) {
+      value = control.value;
+    }
+
+    console.log('Value', value);
+  });
 ```
