@@ -104,6 +104,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
 }
+.philturz-filter-form {
+  display: block;
+  width: 100%;
+}
 .philturz-filter-item + .philturz-filter-item {
   margin-top: 10px;
 }
@@ -201,7 +205,7 @@ body {
   background-color: #FCFCFC;
 }
 @media screen and (min-width: 544px) {
-  .philturz-filter {
+  .philturz-filter-form {
     display: flex;
     flex-wrap: wrap;
   }

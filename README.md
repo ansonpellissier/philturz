@@ -49,6 +49,7 @@ The filter container and filter items must be defined with data attributes detai
     data-philturz-label="Type"
     data-philturz-values="Hatch; Sedan; SUV; 4WD; Wagon">
   </div>
+  <div id="car-filter-reset"></div>
 </div>
 ```
 
@@ -97,12 +98,21 @@ After this, the `init()` method of the **Philturz** library must be called to in
 2. `filterItemClass` - the Class used to denote an individual filter item.
 3. `listId` - the ID of the HTML element which contains the individual list items.
 4. `listItemClass` - the Class used to denote an individual list item.
+5. `filterResetId` - the ID of the HTML element which will contain the reset button.
+4. `filterResetLabel` - Optional. Default: **'Reset filters'**. The label for the reset button.
 
 An example is shown below.
 
 ```HTML
 <script type="text/javascript">
-  philturz.init('car-filter', 'car-filter-item', 'car-list', 'car-list-item');
+  philturz.init(
+    'car-filter',
+    'car-filter-item',
+    'car-list',
+    'car-list-item',
+    'car-filter-reset',
+    'Clear filters'
+  );
 </script>
 ```
 
