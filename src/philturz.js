@@ -27,7 +27,6 @@ var _cfg = {
     }
   },
   attributePrefix: 'data-philturz-',
-  resetButtonText: 'Reset filters',
   valueListDelimiter: '; ',
   emptyValue: '',
   emptyLabel: '',
@@ -237,7 +236,7 @@ function onFormSubmit(e) {
 /*
  * INIT
  */
-export function init(filterId, filterItemClass, listId, listItemClass) {
+export function init(filterId, filterItemClass, listId, listItemClass, filterResetId, filterResetLabel = 'Reset filters') {
   _cfg.selectors.filterId = `#${filterId}`;
   _cfg.selectors.filterItem = `.${filterItemClass}`;
   _cfg.selectors.filterItems = `${_cfg.selectors.filterId} ${_cfg.selectors.filterItem}`;
@@ -249,7 +248,7 @@ export function init(filterId, filterItemClass, listId, listItemClass) {
   var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
   var filter = document.getElementById(filterId);
   var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
-  var filterParent = filter.parentNode;
+  var filterReset = document.getElementById(filterResetId);
 
   _elements[_cfg.selectors.filterId] = filter;
 
@@ -329,26 +328,28 @@ export function init(filterId, filterItemClass, listId, listItemClass) {
         break;
     }
   });
-
-  var form = document.createElement('form');
-  var reset = document.createElement('div');
+  
   var resetButton = document.createElement('input');
 
+  if (filterReset) {
+    resetButton.type = 'reset';
+    resetButton.value = filterResetLabel;
+    resetButton.classList.add(_cfg.classes.filter.resetButton);
+
+    filterReset.classList.add(_cfg.classes.filter.reset);
+    filterReset.appendChild(resetButton);
+  }
+
+  var form = document.createElement('form');
+  var filterChildren = Array.from(filter.childNodes);
+
+  form.classList.add(_cfg.classes.filter.form);
+  filterChildren.forEach(function(filterChild) {
+    form.appendChild(filterChild);
+  });
   form.addEventListener('submit', onFormSubmit);
   form.addEventListener('reset', onResetClick);
 
-  form.classList.add(_cfg.classes.filter.form);
-  reset.classList.add(_cfg.classes.filter.reset);
-
-  resetButton.type = 'reset';
-  resetButton.value = _cfg.resetButtonText;
-  resetButton.classList.add(_cfg.classes.filter.resetButton);
-
-  filterItems.forEach(function(filterItem) {
-    form.appendChild(filterItem);
-  });
-  reset.appendChild(resetButton);
-  form.appendChild(reset);
   filter.appendChild(form);
   
   setEvenListItems();

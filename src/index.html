@@ -37,6 +37,7 @@
         data-philturz-label="Type"
         data-philturz-values="Hatch; Sedan; SUV; 4WD; Wagon">
       </div>
+      <div id="car-filter-reset"></div>
     </div>
 
     <ul id="car-list">
@@ -49,7 +50,7 @@
     <script type="module">
       import { init } from './philturz.js';
 
-      init('car-filter', 'car-filter-item', 'car-list', 'car-list-item');
+      init('car-filter', 'car-filter-item', 'car-list', 'car-list-item', 'car-filter-reset', 'Clear filters');
       
       var element = document.getElementById('car-filter');
 

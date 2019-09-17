@@ -49,6 +49,7 @@
           data-philturz-label="School"
           data-philturz-values="School of Business; School of Arts; School of Health and Life Sciences; School of Nursing and Healthcare Professions; School of Science, Engineering and Information Technology">
         </div>
+        <div id="scholarship-filter-reset"></div>
       </div>
       <div id="scholarship-list" class="scholarship-list">
         <div class="scholarship-list-header" aria-hidden="true">
@@ -172,13 +173,15 @@
         </div>
       </div>
     </div>
-    <script type="text/javascript" src="/dist/philturz-0.2.0.min.js"></script>
+    <script type="text/javascript" src="/dist/philturz-0.4.1.min.js"></script>
     <script>
       philturz.init(
         'scholarship-filter',
         'scholarship-filter-item',
         'scholarship-list',
-        'scholarship-list-item'
+        'scholarship-list-item',
+        'scholarship-filter-reset',
+        'Clear filters'
       );
 
       var element = document.getElementById('scholarship-filter');
