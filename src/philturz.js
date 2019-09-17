@@ -37,13 +37,9 @@ var _cfg = {
   },
   eventsDetail: {
     filterItem: 'philturzFilterItem',
-    filterItemControl: 'philturzFilterItemControl',
   },
 };
 var _filters = [];
-var _events = {
-  change: {},
-};
 var _elements = {};
 
 
@@ -176,19 +172,11 @@ function removeFilterMultiple(key, value) {
 /*
  * CUSTOM EVENTS
  */
-function raiseCustomEvent(type, key, detail = null) {
-  var element = _elements[_cfg.selectors.filterId];
-
-  var changeEvent = _events.change[key];
-
-  if (!changeEvent) {
-    changeEvent = _events.change[key] = new CustomEvent(type, { detail });
-
-    // // TODO: Remove this listener when done
-    // element.addEventListener(type, function(event) {
-    //   console.log(event);
-    // });
-  }
+function raiseCustomEvent(element, type, detail = null) {
+  var changeEvent = new CustomEvent(type, {
+    bubbles: true,
+    detail
+  });
 
   element.dispatchEvent(changeEvent);
 }
@@ -214,10 +202,9 @@ function getOnFilterItemChange(key) {
 
     var eventDetail = {
       [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement,
-      [_cfg.eventsDetail.filterItemControl]: e.target,
     };
 
-    raiseCustomEvent(_cfg.events.change, key, eventDetail);
+    raiseCustomEvent(e.target, _cfg.events.change, eventDetail);
   };
 }
 
@@ -230,17 +217,16 @@ function getOnFilterItemMultipleChange(key) {
 
     var eventDetail = {
       [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement.parentElement,
-      [_cfg.eventsDetail.filterItemControl]: e.target,
     };
     
-    raiseCustomEvent(_cfg.events.change, key, eventDetail);
+    raiseCustomEvent(e.target, _cfg.events.change, eventDetail);
   };
 }
 
 function onResetClick(e) {
   _filters = [];
   filterListItems();
-  raiseCustomEvent(_cfg.events.reset, 'reset');
+  raiseCustomEvent(e.target, _cfg.events.reset);
 }
 
 function onFormSubmit(e) {
