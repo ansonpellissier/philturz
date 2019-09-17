@@ -344,10 +344,12 @@ export function init(filterId, filterItemClass, listId, listItemClass) {
   resetButton.value = _cfg.resetButtonText;
   resetButton.classList.add(_cfg.classes.filter.resetButton);
 
+  filterItems.forEach(function(filterItem) {
+    form.appendChild(filterItem);
+  });
   reset.appendChild(resetButton);
-  filter.appendChild(reset);
-  filterParent.insertBefore(form, filter);
-  form.appendChild(filter);
-
+  form.appendChild(reset);
+  filter.appendChild(form);
+  
   setEvenListItems();
 }

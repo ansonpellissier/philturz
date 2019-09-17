@@ -113,7 +113,7 @@ There are two events that can be listened to:
 1. `philturzChange` - raised when any filter value is changed.
 2. `philturzReset` - raised when the **Reset filters** button is pressed.
 
-Both events will be raised against the element that contains the filters and is denoted by the `filterId` value.
+Both events will bubble up so can be trapped in the ancestors of the source control.
 
 An example is shown below.
 
@@ -134,16 +134,15 @@ An example is shown below.
 The event provided to the `philturzChange` handler includes an object in the `detail` property. This object contains the following values.
 
 1. `philturzFilterItem` - the filter item element that contains the control that changed.
-2. `philturzFilterItemControl` - the control element that changed.
 
-From these elements you can determine the initial **Philturz** data attributes set for the filter item as well as the value and state of the control.
+From this element you can determine the initial **Philturz** data attributes set for the filter item. The value of the control can be found from the target of the event object.
 
 For example.
 
 ```JavaScript
   carFilter.addEventListener('philturzChange', function(e) {
+    var control = e.target;
     var type = e.detail.philturzFilterItem.dataset.philturzType;
-    var control = e.detail.philturzFilterItemControl;
     var value = '';
 
     if (type === 'single' || (type === 'multiple' && control.checked)) {
