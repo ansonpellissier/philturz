@@ -1,3 +1,5 @@
+import 'core-js';
+
 var _cfg = {
   selectors: {},
   types: {
@@ -172,10 +174,13 @@ function removeFilterMultiple(key, value) {
  * CUSTOM EVENTS
  */
 function raiseCustomEvent(element, type, detail = null) {
-  var changeEvent = new CustomEvent(type, {
-    bubbles: true,
-    detail
-  });
+  // NOTE:
+  // Implemented in this fashion to support IE 9+.
+  // https://stackoverflow.com/questions/19345392/why-arent-my-parameters-getting-passed-through-to-a-dispatched-event/19345563#19345563
+
+  var changeEvent = document.createEvent('CustomEvent');
+
+  changeEvent.initCustomEvent(type, true, false, detail);
 
   element.dispatchEvent(changeEvent);
 }
