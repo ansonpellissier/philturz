@@ -89,7 +89,7 @@ Next, the list of items to be filtered needs to be defined with appropriate data
 Before the closing `</body>` tag is the prefered place to include the library file.
 
 ```HTML
-<script type="text/javascript" src="/dist/philturz-0.1.0.min.js"></script>
+<script type="text/javascript" src="/dist/philturz-0.5.0.min.js"></script>
 ```
 
 After this, the `init()` method of the **Philturz** library must be called to initialise the creation of the filters. There are four paramaeters required: 
