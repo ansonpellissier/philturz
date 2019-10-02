@@ -29,7 +29,8 @@ var _cfg = {
     }
   },
   attributePrefix: 'data-philturz-',
-  valueListDelimiter: '; ',
+  parameterPrefix: 'philturz-',
+  valueListDelimiter: ';',
   emptyValue: '',
   emptyLabel: '',
   events: {
@@ -41,14 +42,19 @@ var _cfg = {
   },
 };
 var _filters = [];
-var _elements = {};
 
 
 /*
  * UTILS
  */
+function splitDelimitedValues(valueList) {
+  return valueList
+    .split(_cfg.valueListDelimiter)
+    .map(x => x.trim());
+}
+
 function valuesFromValueList(valueList) {
-  return valueList === _cfg.emptyValue ? [] : valueList.split(_cfg.valueListDelimiter);
+  return valueList === _cfg.emptyValue ? [] : splitDelimitedValues(valueList);
 }
 
 function valuesEqual(a, b) {
@@ -59,8 +65,28 @@ function valueInValues(values, value) {
   return (values.indexOf(value) !== -1);
 }
 
-function isSimpleFilterValue(filterValue) {
-  return typeof filterValue === 'string';
+function getFilterValueCompareFn(filterValue) {
+  return typeof filterValue === 'string' ? valuesEqual : valueInValues;
+}
+
+function getUrlParameters() {
+  let { search } = document.location;
+
+  if (search.length > 0) {
+    if (search.charAt(0) === '?') search = search.substring(1);
+
+    return search
+      .split('&')
+      .filter(x => x.startsWith(_cfg.parameterPrefix))
+      .reduce((previous, current) => {
+        let [ key, value ] = current.split('=');
+        key = key.substring(_cfg.parameterPrefix.length);
+        value = decodeURIComponent(value);
+        return { ...previous, [key]: value };
+      }, {});
+  }
+
+  return {};
 }
 
 
@@ -81,7 +107,7 @@ function setEvenListItems() {
 }
 
 function filterListItemValues(itemValues, filterValue) {
-  var compareFn = isSimpleFilterValue() ? valuesEqual : valueInValues;
+  var compareFn = getFilterValueCompareFn(filterValue);
   return itemValues.some(function(itemValue) {
     return compareFn(filterValue, itemValue);
   });
@@ -150,11 +176,11 @@ function addFilterMultiple(key, value) {
     }
     return createFilter(filter.key, newValue);
   });
-  _filters = isExisting ? newFilters : newFilters.concat(createFilter(key, [value]));
+  return isExisting ? newFilters : newFilters.concat(createFilter(key, [value]));
 }
 
 function removeFilterMultiple(key, value) {
-  _filters = _filters
+  return _filters
     .map(function(filter) {
       var newValue = filter.value;
       if (filter.key === key) {
@@ -216,7 +242,7 @@ function getOnFilterItemMultipleChange(key) {
   return function(e) {
     var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
     
-    addRemoveFn(key, e.target.value);
+    _filters = addRemoveFn(key, e.target.value);
     filterListItems();
 
     var eventDetail = {
@@ -254,8 +280,8 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
   var filter = document.getElementById(filterId);
   var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
   var filterReset = document.getElementById(filterResetId);
-
-  _elements[_cfg.selectors.filterId] = filter;
+  
+  var urlParameters = getUrlParameters();
 
   list.classList.add(_cfg.classes.list.list);
   filter.classList.add(_cfg.classes.filter.filter);
@@ -270,8 +296,10 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
       type: filterItem.dataset.philturzType,
       label: filterItem.dataset.philturzLabel,
       emptyLabel: filterItem.dataset.philturzEmptyLabel || _cfg.emptyLabel,
-      values: filterItem.dataset.philturzValues.split(_cfg.valueListDelimiter)
+      values: splitDelimitedValues(filterItem.dataset.philturzValues)
     };
+    
+    var urlParameter = urlParameters[attributes.key];
 
     var label = document.createElement('label');
     var labelText = document.createTextNode(attributes.label);
@@ -290,7 +318,7 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
         control.classList.add(_cfg.classes.filter.item.control);
         select.classList.add(_cfg.classes.filter.item.controlInput);
         select.autocomplete = 'off';
-        
+
         emptyOption.value = _cfg.emptyValue;
         emptyOption.text = attributes.emptyLabel;
         select.appendChild(emptyOption);
@@ -302,17 +330,25 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
           select.appendChild(option);
         });
 
+        if (urlParameter) {
+          select.value = urlParameter;
+          _filters = addFilter(attributes.key, urlParameter);
+        }
+
         control.appendChild(select);
         filterItem.appendChild(control);
 
         select.addEventListener('change', getOnFilterItemChange(attributes.key));
         break;
       case _cfg.types.multiple:
+        let urlParameterValues = urlParameter ? splitDelimitedValues(urlParameter) : [];
+
         attributes.values.forEach(function(value) {
           var control = document.createElement('div');
           var checkboxLabel = document.createElement('label');
           var checkboxLabelText = document.createTextNode(value);
           var checkbox = document.createElement('input');
+          var checked = urlParameterValues.includes(value);
 
           filterItem.classList.add(_cfg.classes.filter.item.multipleType);
           control.classList.add(_cfg.classes.filter.item.control);
@@ -322,6 +358,7 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
           checkbox.type = 'checkbox';
           checkbox.autocomplete = 'off';
           checkbox.value = value;
+          checkbox.checked = checked;
 
           checkboxLabel.appendChild(checkbox);
           checkboxLabel.appendChild(checkboxLabelText);
@@ -358,4 +395,5 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
   filter.appendChild(form);
   
   setEvenListItems();
+  filterListItems();
 }
