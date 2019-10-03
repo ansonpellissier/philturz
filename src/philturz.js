@@ -42,6 +42,7 @@ var _cfg = {
   },
 };
 var _filters = [];
+var _urlParameters = [];
 
 
 /*
@@ -65,8 +66,12 @@ function valueInValues(values, value) {
   return (values.indexOf(value) !== -1);
 }
 
+function isFilterSimple(filterValue) {
+  return typeof filterValue === 'string';
+}
+
 function getFilterValueCompareFn(filterValue) {
-  return typeof filterValue === 'string' ? valuesEqual : valueInValues;
+  return isFilterSimple(filterValue) ? valuesEqual : valueInValues;
 }
 
 function getUrlParameters() {
@@ -77,16 +82,51 @@ function getUrlParameters() {
 
     return search
       .split('&')
-      .filter(x => x.startsWith(_cfg.parameterPrefix))
-      .reduce((previous, current) => {
-        let [ key, value ] = current.split('=');
-        key = key.substring(_cfg.parameterPrefix.length);
-        value = decodeURIComponent(value);
-        return { ...previous, [key]: value };
-      }, {});
+      .map(x => {
+        const [ key, value ] = x.split('=');
+        return { key, value };
+      });
   }
 
-  return {};
+  return [];
+}
+
+function rebuildUrlParameters() {
+  const filterParameters = _filters
+    .map(x => {
+      const key = _cfg.parameterPrefix.concat(x.key);
+      const isSimple = isFilterSimple(x.value);
+      const value = encodeURIComponent(isSimple ? x.value : x.value.join(_cfg.valueListDelimiter));
+
+      return { key, value };
+    });
+
+  return _urlParameters
+    .filter(x => !x.key.startsWith(_cfg.parameterPrefix))
+    .concat(filterParameters)
+}
+
+function updateQueryString() {
+  let queryString = _urlParameters
+    .map(x => x.key.concat('=', x.value))
+    .join('&');
+
+  if (queryString.length > 0) queryString = '?' + queryString;
+
+  queryString = queryString + document.location.hash;
+
+  if (history.replaceState) history.replaceState(null, null, queryString);
+}
+
+function getPresetValues() {
+  return _urlParameters
+    .filter(x => x.key.startsWith(_cfg.parameterPrefix))
+    .reduce((previous, current) => {
+      const key = current.key.substring(_cfg.parameterPrefix.length);
+      const value = decodeURIComponent(current.value);
+
+      return { ...previous, [key]: value };
+    }, {});
 }
 
 
@@ -144,55 +184,50 @@ function filterListItems() {
  * FILTER SELECTIONS
  */
 function createFilter(key, value) {
-  return { key: key, value: value };
+  return { key, value };
 }
 
 function addFilter(key, value) {
-  var filter = createFilter(key, value);
-  return _filters.concat(filter);
-}
+  const newFilter = createFilter(key, value);
+  const index = _filters.findIndex(f => f.key === key);
 
-function updateFilter(key, value) {
-  return _filters.map(function(filter) {
-    var newValue = (filter.key === key) ? value : filter.value;
-    return createFilter(filter.key, newValue);
-  });
+  if (index < 0) return _filters.concat(newFilter);
+
+  return [ ..._filters.slice(0, index), newFilter, ..._filters.slice(index + 1) ];
 }
 
 function removeFilter(key) {
-  return _filters.filter(function(filter) {
-    return filter.key !== key;
-  });
+  return _filters.filter(f => f.key !== key);
 }
 
 function addFilterMultiple(key, value) {
-  var isExisting = false;
-  var newFilters = _filters.map(function(filter) {
-    var newValue = filter.value;
-    if (filter.key === key) {
-      isExisting = true;
-      var hasValue = filter.value.indexOf(value) !== -1;
-      if (!hasValue) newValue = newValue.concat(value);
-    }
-    return createFilter(filter.key, newValue);
-  });
-  return isExisting ? newFilters : newFilters.concat(createFilter(key, [value]));
+  const index = _filters.findIndex(f => f.key === key);
+
+  if (index < 0) return _filters.concat(createFilter(key, [value]));
+
+  const existingFilter = _filters[index];
+  const newFilter = {
+    ...existingFilter,
+    value: existingFilter.value.concat(value)
+  };
+
+  return [ ..._filters.slice(0, index), newFilter, ..._filters.slice(index + 1) ];
 }
 
 function removeFilterMultiple(key, value) {
-  return _filters
-    .map(function(filter) {
-      var newValue = filter.value;
-      if (filter.key === key) {
-        newValue = newValue.filter(function(v) {
-          return v !== value;
-        });
-      }
-      return createFilter(filter.key, newValue);
-    })
-    .filter(function(filter) {
-      return filter.key !== key || filter.value.length > 0;
-    });
+  const index = _filters.findIndex(f => f.key === key);
+
+  if (index < 0) return _filters;
+
+  const existingFilter = _filters[index];
+  const newFilter = {
+    ...existingFilter,
+    value: existingFilter.value.filter(v => v !== value)
+  };
+
+  if (newFilter.value.length === 0) return [ ..._filters.slice(0, index), ..._filters.slice(index + 1) ];
+
+  return [ ..._filters.slice(0, index), newFilter, ..._filters.slice(index + 1) ];
 }
 
 
@@ -217,20 +252,16 @@ function raiseCustomEvent(element, type, detail = null) {
  */
 function getOnFilterItemChange(key) {
   return function(e) {
-    var value = e.target.value;
+    const { value } = e.target;
+    const empty = (value === _cfg.emptyValue);
     
-    if (value === _cfg.emptyValue) {
-      _filters = removeFilter(key);
-    } else {
-      var isIncluded = _filters.some(function(filter) {
-        return filter.key === key;
-      });
-      _filters = isIncluded ? updateFilter(key, value) : addFilter(key, value);
-    }
+    _filters = empty ? removeFilter(key) : addFilter(key, value);
+    _urlParameters = rebuildUrlParameters();
+    updateQueryString();
 
     filterListItems();
 
-    var eventDetail = {
+    const eventDetail = {
       [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement,
     };
 
@@ -240,12 +271,15 @@ function getOnFilterItemChange(key) {
 
 function getOnFilterItemMultipleChange(key) {
   return function(e) {
-    var addRemoveFn = e.target.checked ? addFilterMultiple : removeFilterMultiple;
-    
-    _filters = addRemoveFn(key, e.target.value);
+    const { checked, value } = e.target;
+
+    _filters = checked ? addFilterMultiple(key, value) : removeFilterMultiple(key, value);
+    _urlParameters = rebuildUrlParameters();
+    updateQueryString();
+
     filterListItems();
 
-    var eventDetail = {
+    const eventDetail = {
       [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement.parentElement,
     };
     
@@ -255,6 +289,9 @@ function getOnFilterItemMultipleChange(key) {
 
 function onResetClick(e) {
   _filters = [];
+  _urlParameters = rebuildUrlParameters();
+  updateQueryString();
+
   filterListItems();
   raiseCustomEvent(e.target, _cfg.events.reset);
 }
@@ -274,14 +311,14 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
   _cfg.selectors.listId = `#${listId}`;
   _cfg.selectors.listItem = `.${listItemClass}`;
   _cfg.selectors.listItems = `${_cfg.selectors.listId} ${_cfg.selectors.listItem}`;
+  _urlParameters = getUrlParameters();
 
   var list = document.getElementById(listId);
   var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
   var filter = document.getElementById(filterId);
   var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
   var filterReset = document.getElementById(filterResetId);
-  
-  var urlParameters = getUrlParameters();
+  var presetValues = getPresetValues();
 
   list.classList.add(_cfg.classes.list.list);
   filter.classList.add(_cfg.classes.filter.filter);
@@ -298,11 +335,11 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
       emptyLabel: filterItem.dataset.philturzEmptyLabel || _cfg.emptyLabel,
       values: splitDelimitedValues(filterItem.dataset.philturzValues)
     };
-    
-    var urlParameter = urlParameters[attributes.key];
+    var presetValue = presetValues[attributes.key];
 
     var label = document.createElement('label');
     var labelText = document.createTextNode(attributes.label);
+    
     label.classList.add(_cfg.classes.filter.item.label);
     filterItem.classList.add(_cfg.classes.filter.item.item);
     label.appendChild(labelText);
@@ -330,9 +367,9 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
           select.appendChild(option);
         });
 
-        if (urlParameter) {
-          select.value = urlParameter;
-          _filters = addFilter(attributes.key, urlParameter);
+        if (presetValue) {
+          select.value = presetValue;
+          _filters = addFilter(attributes.key, presetValue);
         }
 
         control.appendChild(select);
@@ -341,14 +378,14 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
         select.addEventListener('change', getOnFilterItemChange(attributes.key));
         break;
       case _cfg.types.multiple:
-        let urlParameterValues = urlParameter ? splitDelimitedValues(urlParameter) : [];
+        var presetValueList = presetValue ? splitDelimitedValues(presetValue) : [];
 
         attributes.values.forEach(function(value) {
           var control = document.createElement('div');
           var checkboxLabel = document.createElement('label');
           var checkboxLabelText = document.createTextNode(value);
           var checkbox = document.createElement('input');
-          var checked = urlParameterValues.includes(value);
+          var checked = presetValueList.includes(value);
 
           filterItem.classList.add(_cfg.classes.filter.item.multipleType);
           control.classList.add(_cfg.classes.filter.item.control);
@@ -359,6 +396,10 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
           checkbox.autocomplete = 'off';
           checkbox.value = value;
           checkbox.checked = checked;
+
+          if (checked) {
+            _filters = addFilterMultiple(attributes.key, value);
+          }
 
           checkboxLabel.appendChild(checkbox);
           checkboxLabel.appendChild(checkboxLabelText);
@@ -393,7 +434,7 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
   form.addEventListener('reset', onResetClick);
 
   filter.appendChild(form);
-  
+
   setEvenListItems();
   filterListItems();
 }
