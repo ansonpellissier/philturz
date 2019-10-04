@@ -75,7 +75,7 @@ function getFilterValueCompareFn(filterValue) {
 }
 
 function getUrlParameters() {
-  let { search } = document.location;
+  let { search } = location;
 
   if (search.length > 0) {
     if (search.charAt(0) === '?') search = search.substring(1);
@@ -91,8 +91,8 @@ function getUrlParameters() {
   return [];
 }
 
-function rebuildUrlParameters() {
-  const filterParameters = _filters
+function rebuildUrlParameters(urlParameters, filters) {
+  const filterParameters = filters
     .map(x => {
       const key = _cfg.parameterPrefix.concat(x.key);
       const isSimple = isFilterSimple(x.value);
@@ -101,25 +101,29 @@ function rebuildUrlParameters() {
       return { key, value };
     });
 
-  return _urlParameters
+  return urlParameters
     .filter(x => !x.key.startsWith(_cfg.parameterPrefix))
     .concat(filterParameters)
 }
 
-function updateQueryString() {
-  let queryString = _urlParameters
+function updateQueryString(urlParameters) {
+  if (!history.replaceState) return;
+
+  const { origin, pathname, hash } = location;
+
+  let search = urlParameters
     .map(x => x.key.concat('=', x.value))
     .join('&');
 
-  if (queryString.length > 0) queryString = '?' + queryString;
+  if (search.length > 0) search = '?' + search;
 
-  queryString = queryString + document.location.hash;
+  let url = origin + pathname + search + hash;
 
-  if (history.replaceState) history.replaceState(null, null, queryString);
+  history.replaceState(null, null, url);
 }
 
-function getPresetValues() {
-  return _urlParameters
+function getPresetValues(urlParameters) {
+  return urlParameters
     .filter(x => x.key.startsWith(_cfg.parameterPrefix))
     .reduce((previous, current) => {
       const key = current.key.substring(_cfg.parameterPrefix.length);
@@ -153,10 +157,10 @@ function filterListItemValues(itemValues, filterValue) {
   });
 }
 
-function filterListItem(listItem) {
+function filterListItem(filters, listItem) {
   var isHidden = false;
 
-  _filters.some(function(filter) {
+  filters.some(function(filter) {
     var attribute = _cfg.attributePrefix + filter.key;
     var listItemValues = valuesFromValueList(listItem.attributes[attribute].value);
     if (listItemValues.length === 0) return false;
@@ -173,9 +177,11 @@ function filterListItem(listItem) {
   }
 }
 
-function filterListItems() {
-  var listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
-  listItems.forEach(filterListItem);
+function filterListItems(filters) {
+  const listItems = Array.from(document.querySelectorAll(_cfg.selectors.listItems));
+  const filterListItemFn = filterListItem.bind(null, filters);
+
+  listItems.forEach(filterListItemFn);
   setEvenListItems();
 }
 
@@ -187,47 +193,47 @@ function createFilter(key, value) {
   return { key, value };
 }
 
-function addFilter(key, value) {
+function addFilter(filters, key, value) {
   const newFilter = createFilter(key, value);
-  const index = _filters.findIndex(f => f.key === key);
+  const index = filters.findIndex(f => f.key === key);
 
-  if (index < 0) return _filters.concat(newFilter);
+  if (index < 0) return filters.concat(newFilter);
 
-  return [ ..._filters.slice(0, index), newFilter, ..._filters.slice(index + 1) ];
+  return [ ...filters.slice(0, index), newFilter, ...filters.slice(index + 1) ];
 }
 
-function removeFilter(key) {
-  return _filters.filter(f => f.key !== key);
+function removeFilter(filters, key) {
+  return filters.filter(f => f.key !== key);
 }
 
-function addFilterMultiple(key, value) {
-  const index = _filters.findIndex(f => f.key === key);
+function addFilterMultiple(filters, key, value) {
+  const index = filters.findIndex(f => f.key === key);
 
-  if (index < 0) return _filters.concat(createFilter(key, [value]));
+  if (index < 0) return filters.concat(createFilter(key, [value]));
 
-  const existingFilter = _filters[index];
+  const existingFilter = filters[index];
   const newFilter = {
     ...existingFilter,
     value: existingFilter.value.concat(value)
   };
 
-  return [ ..._filters.slice(0, index), newFilter, ..._filters.slice(index + 1) ];
+  return [ ...filters.slice(0, index), newFilter, ...filters.slice(index + 1) ];
 }
 
-function removeFilterMultiple(key, value) {
-  const index = _filters.findIndex(f => f.key === key);
+function removeFilterMultiple(filters, key, value) {
+  const index = filters.findIndex(f => f.key === key);
 
-  if (index < 0) return _filters;
+  if (index < 0) return filters;
 
-  const existingFilter = _filters[index];
+  const existingFilter = filters[index];
   const newFilter = {
     ...existingFilter,
     value: existingFilter.value.filter(v => v !== value)
   };
 
-  if (newFilter.value.length === 0) return [ ..._filters.slice(0, index), ..._filters.slice(index + 1) ];
+  if (newFilter.value.length === 0) return [ ...filters.slice(0, index), ...filters.slice(index + 1) ];
 
-  return [ ..._filters.slice(0, index), newFilter, ..._filters.slice(index + 1) ];
+  return [ ...filters.slice(0, index), newFilter, ...filters.slice(index + 1) ];
 }
 
 
@@ -255,11 +261,11 @@ function getOnFilterItemChange(key) {
     const { value } = e.target;
     const empty = (value === _cfg.emptyValue);
     
-    _filters = empty ? removeFilter(key) : addFilter(key, value);
-    _urlParameters = rebuildUrlParameters();
-    updateQueryString();
+    _filters = empty ? removeFilter(_filters, key) : addFilter(_filters, key, value);
+    _urlParameters = rebuildUrlParameters(_urlParameters, _filters);
+    updateQueryString(_urlParameters);
 
-    filterListItems();
+    filterListItems(_filters);
 
     const eventDetail = {
       [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement,
@@ -273,11 +279,11 @@ function getOnFilterItemMultipleChange(key) {
   return function(e) {
     const { checked, value } = e.target;
 
-    _filters = checked ? addFilterMultiple(key, value) : removeFilterMultiple(key, value);
-    _urlParameters = rebuildUrlParameters();
-    updateQueryString();
+    _filters = checked ? addFilterMultiple(_filters, key, value) : removeFilterMultiple(_filters, key, value);
+    _urlParameters = rebuildUrlParameters(_urlParameters, _filters);
+    updateQueryString(_urlParameters);
 
-    filterListItems();
+    filterListItems(_filters);
 
     const eventDetail = {
       [_cfg.eventsDetail.filterItem]: e.target.parentElement.parentElement.parentElement,
@@ -289,10 +295,10 @@ function getOnFilterItemMultipleChange(key) {
 
 function onResetClick(e) {
   _filters = [];
-  _urlParameters = rebuildUrlParameters();
-  updateQueryString();
+  _urlParameters = rebuildUrlParameters(_urlParameters, _filters);
+  updateQueryString(_urlParameters);
 
-  filterListItems();
+  filterListItems(_filters);
   raiseCustomEvent(e.target, _cfg.events.reset);
 }
 
@@ -318,7 +324,7 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
   var filter = document.getElementById(filterId);
   var filterItems = Array.from(document.querySelectorAll(_cfg.selectors.filterItems));
   var filterReset = document.getElementById(filterResetId);
-  var presetValues = getPresetValues();
+  var presetValues = getPresetValues(_urlParameters);
 
   list.classList.add(_cfg.classes.list.list);
   filter.classList.add(_cfg.classes.filter.filter);
@@ -369,7 +375,7 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
 
         if (presetValue) {
           select.value = presetValue;
-          _filters = addFilter(attributes.key, presetValue);
+          _filters = addFilter(_filters, attributes.key, presetValue);
         }
 
         control.appendChild(select);
@@ -398,7 +404,7 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
           checkbox.checked = checked;
 
           if (checked) {
-            _filters = addFilterMultiple(attributes.key, value);
+            _filters = addFilterMultiple(_filters, attributes.key, value);
           }
 
           checkboxLabel.appendChild(checkbox);
@@ -436,5 +442,5 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
   filter.appendChild(form);
 
   setEvenListItems();
-  filterListItems();
+  filterListItems(_filters);
 }
