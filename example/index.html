@@ -173,7 +173,7 @@
         </div>
       </div>
     </div>
-    <script type="text/javascript" src="/dist/philturz-0.6.0.min.js"></script>
+    <script type="text/javascript" src="/dist/philturz-0.7.0.min.js"></script>
     <script>
       philturz.init(
         'scholarship-filter',
@@ -181,7 +181,10 @@
         'scholarship-list',
         'scholarship-list-item',
         'scholarship-filter-reset',
-        'Clear filters'
+        'Clear filters',
+        {
+          parameterPrefix: '',
+        },
       );
 
       var element = document.getElementById('scholarship-filter');
