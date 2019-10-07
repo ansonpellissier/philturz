@@ -1,6 +1,6 @@
 import 'core-js';
 
-var _cfg = {
+var _defaultCfg = {
   selectors: {},
   types: {
     single: 'single',
@@ -41,6 +41,7 @@ var _cfg = {
     filterItem: 'philturzFilterItem',
   },
 };
+var _cfg = {};
 var _filters = [];
 var _urlParameters = [];
 
@@ -310,7 +311,12 @@ function onFormSubmit(e) {
 /*
  * INIT
  */
-export function init(filterId, filterItemClass, listId, listItemClass, filterResetId, filterResetLabel = 'Reset filters') {
+export function init(filterId, filterItemClass, listId, listItemClass, filterResetId, filterResetLabel = 'Reset filters', cfg = {}) {
+  _cfg = {
+    ..._defaultCfg,
+    ...cfg
+  };
+
   _cfg.selectors.filterId = `#${filterId}`;
   _cfg.selectors.filterItem = `.${filterItemClass}`;
   _cfg.selectors.filterItems = `${_cfg.selectors.filterId} ${_cfg.selectors.filterItem}`;

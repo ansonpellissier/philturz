@@ -50,7 +50,17 @@
     <script type="module">
       import { init } from './philturz.js';
 
-      init('car-filter', 'car-filter-item', 'car-list', 'car-list-item', 'car-filter-reset', 'Clear filters');
+      init(
+        'car-filter',
+        'car-filter-item',
+        'car-list',
+        'car-list-item',
+        'car-filter-reset',
+        'Clear filters',
+        {
+          parameterPrefix: '',
+        },
+      );
       
       var element = document.getElementById('car-filter');
 
