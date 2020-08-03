@@ -40,14 +40,18 @@ The filter container and filter items must be defined with data attributes detai
     data-philturz-type="single"
     data-philturz-label="Origin"
     data-philturz-empty-label="Select origin..."
-    data-philturz-values="France; Germany; South Korea; Australia; Japan">
+    data-philturz-values="France; Germany; South Korea; Australia; Japan"
+    data-philturz-default="Japan"
+  >
   </div>
   <div
     class="car-filter-item"
     data-philturz-key="type"
     data-philturz-type="multiple"
     data-philturz-label="Type"
-    data-philturz-values="Hatch; Sedan; SUV; 4WD; Wagon">
+    data-philturz-values="Hatch; Sedan; SUV; 4WD; Wagon"
+    data-philturz-default="Sedan; Wagon"
+  >
   </div>
   <div id="car-filter-reset"></div>
 </div>
