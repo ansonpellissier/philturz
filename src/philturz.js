@@ -345,7 +345,8 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
       type: filterItem.dataset.philturzType,
       label: filterItem.dataset.philturzLabel,
       emptyLabel: filterItem.dataset.philturzEmptyLabel || _cfg.emptyLabel,
-      values: splitDelimitedValues(filterItem.dataset.philturzValues)
+      values: splitDelimitedValues(filterItem.dataset.philturzValues),
+      default: splitDelimitedValues(filterItem.dataset.philturzDefault || ''),
     };
     var presetValue = presetValues[attributes.key];
 
@@ -379,9 +380,11 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
           select.appendChild(option);
         });
 
-        if (presetValue) {
-          select.value = presetValue;
-          _filters = addFilter(_filters, attributes.key, presetValue);
+        var selectedValue = presetValue || (attributes.default.length > 0 && attributes.default[0]);
+
+        if (selectedValue) {
+          select.value = selectedValue;
+          _filters = addFilter(_filters, attributes.key, selectedValue);
         }
 
         control.appendChild(select);
@@ -397,7 +400,9 @@ export function init(filterId, filterItemClass, listId, listItemClass, filterRes
           var checkboxLabel = document.createElement('label');
           var checkboxLabelText = document.createTextNode(value);
           var checkbox = document.createElement('input');
-          var checked = presetValueList.includes(value);
+          var checked = presetValueList.length > 0
+            ? presetValueList.includes(value)
+            : attributes.default.includes(value);
 
           filterItem.classList.add(_cfg.classes.filter.item.multipleType);
           control.classList.add(_cfg.classes.filter.item.control);
